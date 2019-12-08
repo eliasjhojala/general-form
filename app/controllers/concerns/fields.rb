@@ -33,6 +33,9 @@ module Fields
     collection_select_fields(fields).each do |name, field|
       permitted_fields.push(name => [])
     end
+    flags_select_fields(fields).each do |name, field|
+      permitted_fields.push(name => [])
+    end
     return permitted_fields
   end
 
@@ -56,6 +59,18 @@ module Fields
 
   def associated_field_names(fields)
     associated_fields(fields).keys
+  end
+  
+  def habtm_fields(fields)
+    flat_fields(fields).select { |k,v| v.field_type == :habtm_select && v.multiple }
+  end
+  
+  def habtm_field_names(fields)
+    habtm_fields(fields).keys
+  end
+  
+  def flags_select_fields(fields)
+    flat_fields(fields).select { |k,v| v.field_type == :flags_select }
   end
   
 end

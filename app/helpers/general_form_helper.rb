@@ -126,6 +126,16 @@ module GeneralFormHelper
         f.collection_select field_name, options, 'id', form_field.options_name, {}, { multiple: true, class: 'select2' }
       when :flags_select
         f.collection_select field_name, translated_flag_pairs(record.class, field_name), 'last', 'first', {}, { class: "select2", multiple: true }
+      when :habtm_select
+        value = record.send(form_field.habtm).pluck(:id)
+        if form_field.select_options.respond_to? :call
+          options = form_field.select_options[]
+        else
+          options = form_field.select_options
+        end
+        options = policy_scope(options) if form_field.no_policy_scope.blank?
+        form_field.options_name ||= "name"
+        f.select field_name, options_from_collection_for_select(options, "id", form_field.options_name, value), {:include_blank => "-"}, {class: field_name, 'autocomplete': field_name, multiple: form_field.multiple, disabled: form_field.disabled }
       end
 
     end
