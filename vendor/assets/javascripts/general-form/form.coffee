@@ -7,7 +7,14 @@ $(document).on 'turbolinks:load', ->
   $(form).attr 'action'
 
 @loadForm = ->
-  $('.datepicker').datepicker 'destroy' # Remove possibly existing datepicker
-  $('.datepicker').datepicker dateFormat: 'dd.mm.yy' # Add datepicker
-  $('.datepicker').on 'focus', ->
-    $(this).blur()
+  $('.datepicker').each ->
+    $(this).attr('id', "#{$(this).attr('id')}_datepicker_#{uniqueId(50)}")
+    $(this).datepicker 'destroy'
+    $(this).datepicker dateFormat: 'dd.mm.yy'
+    $(this).on 'focus', ->
+      $(this).blur()
+
+@uniqueId = (length=8) ->
+  id = ""
+  id += Math.random().toString(36).substr(2) while id.length < length
+  id.substr 0, length
