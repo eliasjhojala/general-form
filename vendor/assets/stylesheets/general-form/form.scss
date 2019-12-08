@@ -1,0 +1,273 @@
+@import 'shared/library';
+
+form.general, .general_show_form_fields_container {
+  
+  max-width: 1000px;
+
+  .input_container {
+    span.text_span, input, select {
+      vertical-align: middle;
+      display: inline-block;
+    }
+    span.text_span, input, select, textarea, trix-editor { width: 500px; font-size: 16px; }
+    span.text_span { width: 180px; }
+    @media screen and (max-width: 800px) {
+      span.text_span, input, select, textarea { font-size: 14px; }
+    }
+    @media screen and (max-width: 800px) { span.text_span { width: 180px; } }
+    input, select, textarea, .trix-container { width: calc(100% - 180px); }
+    width: 100%;
+    max-width: 1000px;
+
+    label {
+      user-select: none;
+      font-size: 37px;
+      @media screen and (max-width: 800px) { font-size: 33.5px; }
+      padding: 0px;
+      margin-left: -3.8px;
+      margin-right: 1px;
+      width: 40px;
+      span:last-of-type { display: none; }
+      span:first-of-type { display: inline; }
+      span {
+        font-size: 37px;
+        vertical-align: initial !important;
+        @media screen and (max-width: 800px) { font-size: 33.5px; }
+      }
+      vertical-align: middle;
+    }
+    input[type="checkbox"] {
+      display: none;
+      &:checked + label {
+        color: #018786;
+        span:last-of-type { display: inline; }
+        span:first-of-type { display: none; }
+      }
+      &.disabled:checked + label, &[disabled]:checked + label {
+        color: #757575;
+      }
+    }
+    .file_link, .only_value_span { display: inline-block; margin-top: 8px; margin-bottom: 8px; }
+
+    input:disabled {
+      color: rgb(180,180,180);
+    }
+
+    .trix-container {
+      display: inline-block;
+    }
+
+  }
+
+  .input_container div.field_with_errors, div.field_with_errors {
+    display: inline;
+    input, select, textarea, trix-editor {
+      border-color: $lightRed;
+      &:hover:not(:focus):not([disabled=disabled]) {
+        border: 1px solid $lightRed;
+      }
+    }
+  }
+
+  input[type="submit"] {
+    width: 40rem;
+    max-width: 100%;
+    margin-top: 30px;
+  }
+
+  input, textarea, select, trix-editor {
+    display: block;
+    font-family: inherit;
+    color: $grayBlack;
+    font-size: 18px;
+    padding: 4px;
+    margin: 4px 0;
+    width: 40rem;
+    max-width: 100%;
+    border: 1px solid rgb(200, 200, 200);
+    border-radius: 3px;
+    transition: all 150ms ease;
+    transition-property: box-shadow, border, border-color;
+    outline: none;
+    box-sizing: border-box;
+    background-color: white;
+  }
+
+  .trix-container {
+    width: 40rem;
+  }
+
+  select {
+    -webkit-appearance: none;
+    background-image: image-url('arrow_down.svg');
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-color: white;
+    padding: 0.15em 1.4em 0.15em 0.5em;
+  }
+
+  textarea {
+    vertical-align: top;
+    display: inline-block;
+    height: 4em;
+  }
+
+  .trix-container {
+    vertical-align: top;
+  }
+
+  input, select {
+    height: 1.8em;
+  }
+
+  trix-toolbar {
+    margin-top: 16px;
+  }
+
+  input[type=text], input[type=password], input[type="file"], textarea, trix-editor {
+    &:focus {
+      box-shadow: 0px 0px 1px 1px $themeColor2;
+      border-color: $themeColor2;
+    }
+    &:hover:not(:focus):not([disabled=disabled]) {
+      border: 1px solid rgb(140, 140, 140);
+    }
+  }
+
+  input[type="file"] {
+    height: 2em;
+  }
+
+  trix-toolbar {
+    @media screen and (max-width: 920px) {
+      .quote, .code {
+        display: none;
+      }
+    }
+
+    @media screen and (max-width: 600px) {
+      .strike, .italic, .heading-1 {
+        display: none;
+      }
+      .bullets {
+        border-left: none !important;
+      }
+    }
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    border: none;
+    background: whitesmoke;
+    height: 20px;
+    border-radius: 10px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      background: $background_blue;
+      width: 40px;
+      height: 40px;
+      border-radius: 100%;
+    }
+  }
+  
+  .select2-selection--single {
+    margin-bottom: 5px;
+  }
+
+  .select2-container--default.select2-container--disabled .select2-selection--single {
+    background: white;
+  }
+
+  .input_container {
+    :first-child.title {
+      margin-left: -10px;
+    }
+    span.title {
+      font-size: 1.5em;
+      height: 1.35em;
+      font-weight: bold;
+      margin-top: 0px; margin-bottom: 0px;
+      vertical-align: middle;
+      line-height: 1.45em;
+    }
+    input[type="text"].title, input[type="text"].subtitle {
+      vertical-align: middle;
+      border: none;
+      font-size: 1.5em;
+      height: 1.35em;
+      padding-top: 0px; padding-bottom: 0px;
+      margin-top: 0px; margin-bottom: 0px;
+      width: 100%;
+      font-weight: bold;
+      color: $grayBlack;
+      &:hover:not(:focus) {
+        border: none;
+        box-shadow: 0px 0px 1px 1px rgb(140, 140, 140);
+      }
+    }
+    input[type="text"].subtitle {
+      margin-top: -5px;
+      font-size: 1.2em;
+    }
+
+    trix-editor {
+      width: 100%;
+    }
+
+  }
+
+}
+
+.general_show_form_fields_container {
+  .input_container {
+    &:nth-of-type(even) { background: rgb(245,245,245); }
+    padding: 0.2em;
+    span.text_span {
+      margin-right: 2em;
+    }
+  }
+}
+
+input.disabled {
+  pointer-events: none;
+}
+
+
+form.file_form {
+  input[type="submit"] {
+    width: 40rem;
+  }
+}
+
+select {
+  -webkit-appearance: none;
+  background-image: image-url('arrow_down.svg');
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-color: white;
+  padding: 0.15em 1.4em 0.15em 0.5em;
+}
+
+form.general {
+  .buttons {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 15px;
+    > *, input[type="submit"], .general_button {
+      margin-bottom: initial;
+      margin-top: 15px;
+      width: initial;
+      display: inline-block;
+    }
+    :not(:first-child) {
+      margin-left: 10px;
+    }
+    input[type="submit"]:not(.secondary) {
+      flex: auto;
+    }
+  }
+}

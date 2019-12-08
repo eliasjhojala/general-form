@@ -1,0 +1,43 @@
+table.attachments {
+  td {
+    padding: 15px;
+    transition-duration: 150ms;
+    border-radius: 5px;
+  }
+  td:not(.preview) {
+    vertical-align: top;
+  }
+  td.preview {
+    text-align: center;
+    background: #B2EBF2;
+    border-radius: 5px;
+    padding: 5px;
+    height: 100px;
+    img, video {
+      border-radius: 5px;
+    }
+    .file_extension_symbol {
+      font-size: 30px;
+    }
+  }
+  tr {
+    transition-duration: 150ms;
+  }
+  tr:hover {
+    background: #ECEFF1;
+    transition-duration: 150ms;
+    td.preview {
+      background: #80DEEA;
+    }
+  }
+}
+
+.download_file_icon, .delete_file_icon {
+  font-size: 18px;
+}
+
+body.storage_show_attachment {
+  .download_file_icon {
+    font-size: 40px;
+  }
+}
