@@ -26,6 +26,9 @@ module AlterableHasManyAssociationHandler
       flat_fields_ = flat_fields(fields)
       habtm_field_names_ = habtm_field_names(fields)
       flags_select_field_names_ = flags_select_fields(fields).keys
+      file_and_files_fields_names_ = file_and_files_fields(fields).keys
+      
+      prevent_activerecord_import = run_callbacks || habtm_field_names_.any? || flags_select_field_names_.any? || file_and_files_fields_names_.any?
       
       # Loop through all the items and either run commands on them or just initialize them for commands to be run later
       items[item_array_name].each do |item|
@@ -33,7 +36,7 @@ module AlterableHasManyAssociationHandler
         permitted_params = item.permit(params_to_permit).except(habtm_field_names_)
         if item_id.present? # If item is not new --> update it
           if item[existence_field_name].present? # If item should be kept --> update it
-            unless run_callbacks || habtm_field_names_.any? || flags_select_field_names_.any?
+            unless prevent_activerecord_import
               items_relation_hash[item_id]&.assign_attributes(permitted_params)
               items_to_save << items_relation_hash[item_id] if items_relation_hash[item_id]&.changed?
             else
@@ -47,7 +50,7 @@ module AlterableHasManyAssociationHandler
           if (options.keys & [:associated_object, :association, :assoc]).any? # If item should be associated to parent object
             associated_object << new_item
           else # If item shouldn't be associated to parent object
-            unless run_callbacks || habtm_field_names_.any? # If callbacks shouldn't be ran add new item to array to be saved later
+            unless prevent_activerecord_import
               items_to_save << new_item
             else # If callbacks should be ran save item now
               new_item.save

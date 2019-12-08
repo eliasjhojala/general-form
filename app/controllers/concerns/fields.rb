@@ -44,9 +44,17 @@ module Fields
       v.field_type == :associated_fields
     end.group_by(&:first).map{|k,v| Hash[k, v.map(&:last)]}.inject(&:merge)
   end
+  
+  def file_fields(fields)
+    flat_fields(fields).select { |k,v| v.field_type == :file }
+  end
 
   def files_fields(fields)
     flat_fields(fields).select { |k,v| v.field_type == :files }
+  end
+  
+  def file_and_files_fields(fields)
+    flat_fields(fields).select { |k,v| [:file, :files].include?(v.field_type) }
   end
 
   def multiple_select_fields(fields)
