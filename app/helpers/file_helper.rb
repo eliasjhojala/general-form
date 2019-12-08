@@ -56,6 +56,40 @@ module FileHelper
 
   end
   
+  def links_for_attachments model, files_name = :attachments
+    if model.send(files_name).attached?
+      model.send(files_name).map do |attachment|
+        link_for_attachment attachment
+      end.join(', ').html_safe
+    end
+  end
+
+  def text_for_attachment_link attachment
+    "#{attachment.filename.base&.truncate(40)}#{attachment.filename.extension_with_delimiter}"
+  end
+
+  def path_for_attachment_link attachment, disposition = 'inline'
+    rails_blob_path(attachment, disposition: disposition)
+  end
+
+  def link_for_attachment attachment, disposition = 'inline'
+    link_to text_for_attachment_link(attachment),
+    path_for_attachment_link(attachment, disposition), target: '__blank'
+  end
+
+  def download_link_for_attachment attachment
+    link_to 'cloud_download',
+    path_for_attachment_link(attachment, 'attachment'), class: 'material-icons'
+  end
+
+  def show_link_for_attachment attachment, **opts
+    if opts[:layout].present?
+      link_to attachment.filename, show_attachment_path(attachment.id, **opts)
+    else
+      link_to attachment.filename, show_attachment_path(attachment.id), target: '__blank'
+    end
+  end
+  
   def default_file_field f, model, **options
     options[:files_name] ||= :attachments
     [f.file_field(options[:files_name], multiple: true),
@@ -69,7 +103,7 @@ module FileHelper
       [link_to(attachment.filename, rails_blob_path(attachment, disposition: "inline"), target: "__blank"),
       link_to('Poista', delete_attachment_path(attachment.id), method: :delete, **are_you_sure_confirm)].join(' ').html_safe
     else
-      f.file_field options[:attachment_name], multiple: false, direct_upload: true
+      f.file_field options[:attachment_name], multiple: false, direct_upload: false
     end
   end
   
