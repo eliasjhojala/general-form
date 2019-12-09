@@ -6,7 +6,7 @@ module Fields
     return_as_hash = return_with_names && (!opts.key?(:hash) || opts[:hash])
     fields = fields.flatten.map do |x|
       if x.is_a? Symbol
-        x = UsesFormField::FormField.new(field_name: x)
+        x = GeneralForm::Field.new(field_name: x)
       end
       return_with_names ? [x.field_name, x] : x
     end
