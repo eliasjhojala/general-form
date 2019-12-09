@@ -18,7 +18,7 @@ module ShowFormFieldsHelper
       toReturn = '<div class="input_container '+form_fields.map(&:field_name).map{|field| "#{field}_container"}.join(" ")+'">'
       form_fields.each do |field|
         next if field.field_type == :hidden
-        unless field.priviliges.present? && !@current_user.priviliges?(field.priviliges)
+        unless field.privileges.present? && !@current_user.privileges?(field.privileges)
           text = field.text.present? ? field.text : field.field_name
           span_content = record.class.human_attribute_name text
           span_content = content_tag(:a, span_content, href: "") if field.text_type == :link
