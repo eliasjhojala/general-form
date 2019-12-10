@@ -43,7 +43,7 @@ module GeneralFormHelper
         allFormFields(ff, record.send(form_fields[0].field_name), associated_fields)
       end
     else
-      tag.div class: "input_container #{form_fields.map(&:field_name).map{|field| "#{field}_container"}.join(' ')}" do
+      tag.div class: ['input_container', form_fields.map(&:field_name).map{|field| "#{field}_container"}, form_fields.map(&:field_type).map{|field| "#{field}_container"}].flatten.uniq.join(' ') do
         form_fields.each do |field|
           unless field.privileges.present? && !@current_user.privileges?(field.privileges)
             text = field.text.present? ? field.text : field.field_name

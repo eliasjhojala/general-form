@@ -210,8 +210,10 @@ form.general, .general_show_form_fields_container {
       }
     }
     input[type="text"].subtitle {
-      margin-top: -5px;
       font-size: 1.2em;
+    }
+    &.subtitle_container {
+      margin-top: -5px;
     }
 
     trix-editor {
