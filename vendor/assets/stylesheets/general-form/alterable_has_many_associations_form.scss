@@ -1,53 +1,65 @@
 @import 'shared/theme';
 
-span.alterable_has_many_associations_form, span.show_alterable_has_many_associations_form {
-  table.general {
-    td {
-      padding:0; margin:0;
-      background:white;
-      input {
-        margin: 0;
+form.general {
+  span.alterable_has_many_associations_form, span.show_alterable_has_many_associations_form {
+    table.general {
+      td {
+        padding-top:0;
+        padding-bottom: 0;
+        margin:0;
+        background: none;
+        input {
+          margin: 0;
+        }
+      }
+      tr {
+        background: none;
+        &:nth-child(even) {
+          input, select, .select2-selection {
+            background-color: rgb(245,245,245);
+          }
+        }
       }
     }
-    tr {
-      &:nth-child(even) input { background: rgb(245,245,245); }
-    }
-  }
-  input {
-    width: 300px;
-    &[type="submit"] {
-      width: 100%;
-      max-width: 100%;
-    }
-  }
-  .add-item span {
-    margin-top: 15px;
-    border-radius: 50%;
-    padding: 12px;
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
-    color: white;
-    font-size: 30px;
-    background: $background_blue;
-    transition-duration: 150ms;
-    transition-timing-function: ease-in-out;
-    &:hover {
-      box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
-      background: $background_blue_hover;
-    }
-    &:active {
-      box-shadow: 0 0 6px rgba(0, 0, 0, 0.16), 0 6px 12px rgba(0, 0, 0, 0.32);
-      background: $background_blue_active;
-    }
-  }
-  div.input_container {
     input {
       width: 300px;
+      &[type="submit"] {
+        width: 100%;
+        max-width: 100%;
+      }
     }
-    select {
-      width: 400px;
+    .add-item span {
+      margin-top: 15px;
+      border-radius: 50%;
+      padding: 12px;
+      box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+      color: white;
+      font-size: 30px;
+      background: $background_blue;
+      transition-duration: 150ms;
+      transition-timing-function: ease-in-out;
+      &:hover {
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+        background: $background_blue_hover;
+      }
+      &:active {
+        box-shadow: 0 0 6px rgba(0, 0, 0, 0.16), 0 6px 12px rgba(0, 0, 0, 0.32);
+        background: $background_blue_active;
+      }
     }
-    > span:first-of-type {
-      display: none !important;
+    div.input_container {
+      input {
+        width: 300px;
+      }
+      select {
+        width: 400px;
+      }
+      > span:first-of-type {
+        display: none !important;
+      }
+    }
+    .select2-selection--single {
+      margin-bottom: initial;
     }
   }
 }
