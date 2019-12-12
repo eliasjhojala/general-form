@@ -7,7 +7,7 @@ module ShowFormFieldsHelper
     return
   end
   
-  def show_form_fields(record, form_fields, fields_name = nil)
+  def show_form_fields(record, form_fields, fields_name = nil, **opts)
     form_fields = standardize_form_fields form_fields
     if form_fields.count() == 1 && form_fields[0].field_type == :associated_fields
       associated_fields = form_fields[0].associated_fields
@@ -19,13 +19,17 @@ module ShowFormFieldsHelper
       form_fields.each do |field|
         next if field.field_type == :hidden
         unless field.privileges.present? && !@current_user.privileges?(field.privileges)
-          text = field.text.present? ? field.text : field.field_name
-          span_content = record.class.human_attribute_name text
-          span_content = content_tag(:a, span_content, href: "") if field.text_type == :link
-          toReturn += content_tag(:span, span_content, class: "#{field.field_name} text_span") unless field.hide_name || field.name_after
+          unless opts[:only_value].present?
+            text = field.text.present? ? field.text : field.field_name
+            span_content = record.class.human_attribute_name text
+            span_content = content_tag(:a, span_content, href: "") if field.text_type == :link
+            toReturn += content_tag(:span, span_content, class: "#{field.field_name} text_span") unless field.hide_name || field.name_after
+          end
           toReturn += tag.span(show_form_field(record, field, fields_name) || "", class: field.field_name)
-          toReturn += content_tag(:span, span_content, class: "#{field.field_name} text_span") if field.name_after
-          toReturn += content_tag(:span, field.text_after, class: "#{field.field_name.to_s} text_after text_span") if field.text_after
+          unless opts[:only_value].present?
+            toReturn += content_tag(:span, span_content, class: "#{field.field_name} text_span") if   field.name_after
+            toReturn += content_tag(:span, field.text_after, class: "#{field.field_name.to_s} text_after text_span") if field.text_after
+          end
         end
       end
       toReturn += '</div>'

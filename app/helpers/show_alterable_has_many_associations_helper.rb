@@ -8,7 +8,7 @@ module ShowAlterableHasManyAssociationsHelper
 
     tag.tr do
       fields.each do |field|
-        concat tag.td(show_form_fields(item, field))
+        concat tag.td(show_form_fields(item, field, only_value: true))
       end
     end
   end
