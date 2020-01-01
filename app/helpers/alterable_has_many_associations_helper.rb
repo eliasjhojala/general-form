@@ -64,7 +64,7 @@ module AlterableHasManyAssociationsHelper
         tag.tbody(class: "fields") do
           tag.tr(class: "subjectRow") do
             subjects.each do |subject, field|
-              concat tag.th(I18n.t("activerecord.attributes.#{item_class.name.underscore}.#{subject}"), class: subject)
+              concat tag.th(item_class.human_attribute_name(subject), class: subject)
             end
           end + capture do
             associated_object.each do |item|
