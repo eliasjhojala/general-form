@@ -180,11 +180,12 @@ module GeneralFormHelper
     end
   end
   
-  def general_form_with_fields_for record, fields = nil
+  def general_form_with_fields_for record, fields = nil, &block
     fields ||= record.class::DEFAULT_FORM_FIELDS
     concat list_errors record
     form_for record, html: { class: 'general' } do |f|
       concat allFormFields f, record, fields
+      concat yield f if block_given?
       concat f.submit
     end
   end
