@@ -198,7 +198,7 @@ module GeneralFormHelper
       elsif object.is_a?(Class) && object < ApplicationRecord
         object
       end)&.name&.underscore
-      enums = t("activerecord.enums.#{model_name}.#{enum}", default: [:"activerecord.enums.#{field_name}"])
+      enums = t("activerecord.enums.#{model_name}.#{enum}", default: [:"activerecord.enums.#{enum}"])
       if enums.present? && enums.is_a?(Hash)
         options_for_select enums.invert, record&.send(enum)
       end
