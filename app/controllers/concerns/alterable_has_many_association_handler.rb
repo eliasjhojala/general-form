@@ -45,7 +45,7 @@ module AlterableHasManyAssociationHandler
           elsif options[:only_insert].blank? # If item should be deleted --> delete it
             item_ids_to_delete << item_id
           end
-        else # If item is new --> create it
+        elsif item[existence_field_name].present? # If item is new and not empty --> create it
           new_item = item_class.new(permitted_params)
           if (options.keys & [:associated_object, :association, :assoc]).any? # If item should be associated to parent object
             associated_object << new_item
