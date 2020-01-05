@@ -2,6 +2,8 @@ used_unique_ids = []
 
 $(document).on 'turbolinks:load', ->
   loadForm()
+  $('.add-item').click ->
+    @loadForm()
   $('input.disabled').on 'focus', ->
     $(this).blur()
 
@@ -16,7 +18,7 @@ $(document).on 'turbolinks:load', ->
       $(this).attr('id', "#{$(this).attr('id')}_datepicker_#{uniqueId(datepicker_ui_length)}")
     $(this).datepicker 'destroy'
     $(this).datepicker dateFormat: 'dd.mm.yy'
-    $(this).on 'focus', ->
+    $(this).off('focus.blur').on 'focus.blur', ->
       $(this).blur()
       
   checkbox_amount = $('.input_container.check_box_container').length
