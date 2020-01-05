@@ -3,7 +3,7 @@ used_unique_ids = []
 $(document).on 'turbolinks:load', ->
   loadForm()
   $('.add-item').click ->
-    setTimeout( -> @loadForm() ), 300
+    setTimeout ( -> @loadForm() ), 300
   $('input.disabled').on 'focus', ->
     $(this).blur()
 
