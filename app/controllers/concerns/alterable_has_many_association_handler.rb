@@ -27,6 +27,7 @@ module AlterableHasManyAssociationHandler
       habtm_field_names_ = habtm_field_names(fields)
       flags_select_field_names_ = flags_select_fields(fields).keys
       file_and_files_fields_names_ = file_and_files_fields(fields).keys
+      check_box_fields_names_ = check_box_fields(fields).keys
       
       prevent_activerecord_import = run_callbacks || habtm_field_names_.any? || flags_select_field_names_.any? || file_and_files_fields_names_.any?
       
@@ -34,6 +35,7 @@ module AlterableHasManyAssociationHandler
       items[item_array_name].each do |item|
         item_id = item[id_field_name].present? ? item[id_field_name].to_i : nil
         permitted_params = item.permit(params_to_permit).except(habtm_field_names_)
+        check_box_fields_names_.each { |field| permitted_params[field] ||= false } # In normal form there would be hidden 0-field to do this, but it doesn't work correct with form containing has-many-association
         if item_id.present? # If item is not new --> update it
           if item[existence_field_name].present? # If item should be kept --> update it
             unless prevent_activerecord_import

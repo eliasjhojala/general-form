@@ -14,7 +14,7 @@ module AlterableHasManyAssociationsHelper
         concat sif.hidden_field :id, value: item.id
         item_fields = (options[:item_fields] || item_class::DEFAULT_FORM_FIELDS)
         item_fields.each do |field|
-          concat tag.td(formFields(sif, item, field))
+          concat tag.td(formFields(sif, item, field, is_part_of_alterable_has_many_association: true))
         end
       end
     end

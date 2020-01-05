@@ -81,4 +81,8 @@ module Fields
     flat_fields(fields).select { |k,v| v.field_type == :flags_select }
   end
   
+  def check_box_fields(fields)
+    flat_fields(fields).select { |k,v| v.field_type == :check_box }
+  end
+  
 end

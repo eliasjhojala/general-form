@@ -27,20 +27,20 @@ module GeneralFormHelper
     nil # Prevent printing tabs.each (array)
   end
   
-  def allFormFields(f, record, fields)
+  def allFormFields(f, record, fields, **options)
     fields.each do |field|
-      concat formFields(f, record, field)
+      concat formFields(f, record, field, **options)
     end
     return
   end
   
-  def formFields(f, record, form_fields)
+  def formFields(f, record, form_fields, **options)
     form_fields = standardize_form_fields form_fields
     if form_fields.count() == 1 && form_fields[0].field_type == :associated_fields
       f.fields_for form_fields[0].field_name do |ff|
         associated_fields = form_fields[0].associated_fields
         associated_fields ||= form_fields[0].associated_model::DEFAULT_FORM_FIELDS
-        allFormFields(ff, record.send(form_fields[0].field_name), associated_fields)
+        allFormFields(ff, record.send(form_fields[0].field_name), associated_fields, **options)
       end
     else
       tag.div class: ['input_container', form_fields.map(&:field_name).map{|field| "#{field}_container"}, form_fields.map(&:field_type).map{|field| "#{field}_container"}].flatten.uniq.join(' ') do
@@ -52,7 +52,7 @@ module GeneralFormHelper
             text_span = tag.span(span_content, class: "#{field.field_name} text_span")
             
             concat text_span unless field.hide_name || field.name_after
-            concat formField(f, record, field)
+            concat formField(f, record, field, **options)
             concat text_span if field.name_after
             concat tag.span(field.text_after.html_safe, class: "#{field.field_name} text_after text_span") if field.text_after
           end
@@ -61,7 +61,7 @@ module GeneralFormHelper
     end
   end
 
-  def formField(f, record, form_field)
+  def formField(f, record, form_field, **options)
     form_field = standardize_form_field form_field
     field_name = form_field.field_name
     field_type = form_field.field_type || :default
@@ -73,7 +73,7 @@ module GeneralFormHelper
       when :password; f.password_field field_name, class: field_name, placeholder: field_name_translated, 'autocomplete': field_name
       when :title; f.text_field field_name, class: "#{field_name} title", placeholder: field_name_translated, 'autocomplete': field_name
       when :subtitle; f.text_field field_name, class: "#{field_name} subtitle", placeholder: field_name_translated, 'autocomplete': field_name
-      when :check_box; f.check_box(field_name, class: field_name) + f.label(field_name, "<span>check_box_outline_blank</span><span>check_box</span>".html_safe, class: "material-icons #{field_name}")
+      when :check_box; f.check_box(field_name, class: field_name, include_hidden: options[:is_part_of_alterable_has_many_association].blank?) + f.label(field_name, "<span>check_box_outline_blank</span><span>check_box</span>".html_safe, class: "material-icons #{field_name}")
       when :text_area; f.text_area field_name, class: field_name, placeholder: field_name_translated
       when :trix_editor; tag.div(f.trix_editor(field_name, class: field_name, placeholder: field_name_translated), class: 'trix-container')
       when :datepicker; f.text_field field_name, class: "#{field_name} datepicker", value: (f.object[field_name].strftime('%-d.%-m.%Y') rescue f.object[field_name]), placeholder: field_name_translated

@@ -1,3 +1,5 @@
+used_unique_ids = []
+
 $(document).on 'turbolinks:load', ->
   loadForm()
   $('input.disabled').on 'focus', ->
@@ -7,14 +9,35 @@ $(document).on 'turbolinks:load', ->
   $(form).attr 'action'
 
 @loadForm = ->
+  datepicker_amount = $('.datepicker').length
+  datepicker_ui_length = Math.ceil(datepicker_amount / 5)
   $('.datepicker').each ->
-    $(this).attr('id', "#{$(this).attr('id')}_datepicker_#{uniqueId(50)}")
+    if datepicker_amount > 1
+      $(this).attr('id', "#{$(this).attr('id')}_datepicker_#{uniqueId(datepicker_ui_length)}")
     $(this).datepicker 'destroy'
     $(this).datepicker dateFormat: 'dd.mm.yy'
     $(this).on 'focus', ->
       $(this).blur()
+      
+  checkbox_amount = $('.input_container.check_box_container').length
+  if checkbox_amount > 1
+    checkbox_uid_length = Math.ceil(checkbox_amount / 5)
+    $('.input_container.check_box_container').each ->
+      checkbox = $(this).find('input[type="checkbox"]')
+      label = $(this).find('label')
+      uid = uniqueId(checkbox_uid_length)
+      $(label).attr('for', "#{$(label).attr('for')}_checkbox_#{uid}")
+      $(checkbox).attr('id', "#{$(checkbox).attr('id')}_checkbox_#{uid}")
+    
+@uniqueId = (length) ->
+  uid = randomId(length)
+  if uid in used_unique_ids
+    uid = @uniqueId(length, used_unique_ids)
+  else
+    used_unique_ids.push(uid)
+  uid
 
-@uniqueId = (length=8) ->
+@randomId = (length=8) ->
   id = ""
   id += Math.random().toString(36).substr(2) while id.length < length
   id.substr 0, length
