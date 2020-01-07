@@ -6,7 +6,7 @@ module AlterableHasManyAssociationsHelper
     item_array_name = options[:item_array_name]
     item = options[:item]
     
-    item ||= item_class.new **options[:field_values]
+    item ||= item_class.new **options[:field_values] || {}
     item_for_fields = item.dup
     item_for_fields.id = nil
     f.fields_for item_array_name, item_for_fields do |sif|
@@ -41,7 +41,7 @@ module AlterableHasManyAssociationsHelper
     
   end
   
-  def alterable_has_many_associations_form_contents (**options)
+  def alterable_has_many_associations_form_contents **options
     
     f = options[:f]
     associated_object = options[:associated_object]
