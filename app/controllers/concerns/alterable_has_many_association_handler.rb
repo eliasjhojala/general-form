@@ -11,6 +11,8 @@ module AlterableHasManyAssociationHandler
     params_to_permit = (options[:params_to_permit] || permit_fields(fields)) | [:id]
     run_callbacks = options[:run_callbacks]
     
+    return if items.blank? || items[item_array_name].blank?
+    
     ActiveRecord::Base.transaction do
     
       # Start by defining objects to store items to save and delete. These are needed only if callbaks haven't to be run.
