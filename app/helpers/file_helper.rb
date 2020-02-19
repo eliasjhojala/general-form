@@ -99,7 +99,7 @@ module FileHelper
   def single_file_field f, model, **options
     options[:attachment_name] ||= :attachment
     attachment = model.send(options[:attachment_name])
-    if attachment.attached?
+    if attachment.attached? && !options[:replace_instead_of_delete]
       [link_to(attachment.filename, rails_blob_path(attachment, disposition: "inline"), target: "__blank"),
       link_to('Poista', delete_attachment_path(attachment.id), method: :delete, **are_you_sure_confirm)].join(' ').html_safe
     else
