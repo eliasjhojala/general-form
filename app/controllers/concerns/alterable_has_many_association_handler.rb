@@ -7,7 +7,7 @@ module AlterableHasManyAssociationHandler
     item_array_name = options[:item_array_name] || "#{associated_object.klass.name.pluralize.underscore}"
     existence_field_name = options[:existence_field_name] || options[:existence_field]
     id_field_name = options[:id_field_name] || :id
-    fields = item_class::DEFAULT_FORM_FIELDS
+    fields = options[:item_fields] || item_class::DEFAULT_FORM_FIELDS
     params_to_permit = (options[:params_to_permit] || permit_fields(fields)) | [:id]
     run_callbacks = options[:run_callbacks]
     
