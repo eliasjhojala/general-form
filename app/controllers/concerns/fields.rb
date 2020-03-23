@@ -18,23 +18,29 @@ module Fields
   end
 
   def permit_fields(fields)
-    permitted_fields = field_names(fields).push(:id)
+    permitted_fields = [:id]
+    flat_fields(fields).each do |name, field|
+      unless field.privileges.present? && !@current_user.privileges?(field.privileges)
+        permitted_fields << name
+      end
+    end
     associated_fields(fields)&.each do |name, field|
       field = [field] unless field.class == Array
       field.each { |f| f.associated_fields ||= f.associated_model::DEFAULT_FORM_FIELDS }
       permitted_fields.push("#{name}_attributes" => permit_fields(field.map(&:associated_fields)))
     end
-    files_fields(fields).each do |name, field|
-      permitted_fields.push(name => [])
-    end
-    multiple_select_fields(fields).each do |name, field|
-      permitted_fields.push(name => [])
-    end
-    collection_select_fields(fields).each do |name, field|
-      permitted_fields.push(name => [])
-    end
-    flags_select_fields(fields).each do |name, field|
-      permitted_fields.push(name => [])
+    special_fields = [
+      files_fields(fields),
+      multiple_select_fields(fields),
+      collection_select_fields(fields),
+      flags_select_fields(fields)
+    ]
+    special_fields.each do |fields|
+      fields&.each do |field, name|
+        unless field.privileges.present? && !@current_user.privileges?(field.privileges)
+          permitted_fields.push(name => [])
+        end
+      end
     end
     return permitted_fields
   end
