@@ -36,7 +36,7 @@ module Fields
       flags_select_fields(fields)
     ]
     special_fields.each do |fields|
-      fields&.each do |field, name|
+      fields&.each do |name, field|
         unless field.privileges.present? && !@current_user.privileges?(field.privileges)
           permitted_fields.push(name => [])
         end
