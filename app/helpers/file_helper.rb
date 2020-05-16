@@ -92,7 +92,7 @@ module FileHelper
   
   def default_file_field f, model, **options
     options[:files_name] ||= :attachments
-    [f.file_field(options[:files_name], multiple: true),
+    [f.file_field(options[:files_name], multiple: true, **options.slice(:direct_upload)),
     list_attached_files(model, show_delete: true, files_name: options[:files_name])].join(' ').html_safe
   end
   
@@ -103,7 +103,7 @@ module FileHelper
       [link_to(attachment.filename, rails_blob_path(attachment, disposition: "inline"), target: "__blank"),
       link_to('Poista', delete_attachment_path(attachment.id), method: :delete, **are_you_sure_confirm)].join(' ').html_safe
     else
-      f.file_field options[:attachment_name], multiple: false, direct_upload: false
+      f.file_field options[:attachment_name], multiple: false, **options.slice(:direct_upload)
     end
   end
   

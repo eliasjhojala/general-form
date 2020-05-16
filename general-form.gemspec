@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name = %q{general-form}
-  s.version = '0.0.30'
-  s.date = %q{2019-12-08}
+  s.version = '0.0.31'
+  s.date = %q{2020-05-16}
   s.summary = %q{general system for rendering form and handling data in controller}
   s.files = [
     'lib/general-form.rb'
