@@ -16,6 +16,9 @@ module AlterableHasManyAssociationsHelper
         item_fields.each do |field|
           concat tag.td(formFields(sif, item, field, is_part_of_alterable_has_many_association: true))
         end
+        if options[:delete_button]
+          concat tag.td(link_to('delete', '', class: 'material-icons delete-button'))
+        end
       end
     end
   end
@@ -66,12 +69,15 @@ module AlterableHasManyAssociationsHelper
             subjects.each do |subject, field|
               concat tag.th(item_class.human_attribute_name(subject), class: subject)
             end
-          end + capture do
-            associated_object.each do |item|
-              concat one_item(f: f, item: item, item_array_name: item_array_name, item_class: item_class, item_fields: item_fields)
+            if options[:delete_button]
+              concat tag.th('')
             end
           end + capture do
-            concat one_item(f: f, item_array_name: item_array_name, item_class: item_class, item_fields: item_fields, **options.slice(:field_values)) unless associated_object.any?
+            associated_object.each do |item|
+              concat one_item(f: f, item: item, item_array_name: item_array_name, item_class: item_class, item_fields: item_fields, **options.slice(:delete_button))
+            end
+          end + capture do
+            concat one_item(f: f, item_array_name: item_array_name, item_class: item_class, item_fields: item_fields, **options.slice(:delete_button, :field_values)) unless associated_object.any?
           end
         end + capture do
           concat tag.tr(tag.td(f.submit('Tallenna'), colspan: subjects.length)) if options[:show_submit]
@@ -79,7 +85,7 @@ module AlterableHasManyAssociationsHelper
         
       end + capture do
         concat add_button unless options[:hide_add_button]
-        concat tag.template(one_item(f: f, item_array_name: item_array_name, item_class: item_class, item_fields: item_fields, **options.slice(:field_values)), id: "new-item-template") unless options[:hide_add_button]
+        concat tag.template(one_item(f: f, item_array_name: item_array_name, item_class: item_class, item_fields: item_fields, **options.slice(:delete_button, :field_values)), id: "new-item-template") unless options[:hide_add_button]
       end
       
     end
