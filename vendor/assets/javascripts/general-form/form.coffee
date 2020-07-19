@@ -21,6 +21,14 @@ $(document).on 'turbolinks:load', ->
     $(this).off('focus.blur').on 'focus.blur', ->
       $(this).blur()
       
+  # Render datepicker properly after back button press
+  $(document).on 'turbolinks:before-cache', ->
+    $.datepicker.dpDiv.remove()
+    $('.datepicker').each ->
+      $(this).datepicker 'destroy'  
+  $(document).on 'turbolinks:before-render', ->
+    $.datepicker.dpDiv.appendTo(event.data.newBody)
+      
   checkbox_amount = $('.input_container.check_box_container').length
   if checkbox_amount > 1
     checkbox_uid_length = Math.ceil(checkbox_amount / 5)
