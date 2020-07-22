@@ -70,7 +70,7 @@ module GeneralFormHelper
 
       case field_type
       when :default; f.text_field field_name, class: field_name, placeholder: field_name_translated, 'autocomplete': field_name
-      when :password; f.password_field field_name, class: field_name, placeholder: field_name_translated, 'autocomplete': field_name
+      when :password; f.password_field field_name, class: field_name, placeholder: field_name_translated
       when :title; f.text_field field_name, class: "#{field_name} title", placeholder: field_name_translated, 'autocomplete': field_name
       when :subtitle; f.text_field field_name, class: "#{field_name} subtitle", placeholder: field_name_translated, 'autocomplete': field_name
       when :check_box; f.check_box(field_name, class: field_name, include_hidden: options[:is_part_of_alterable_has_many_association].blank?) + f.label(field_name, "<span>check_box_outline_blank</span><span>check_box</span>".html_safe, class: "material-icons #{field_name}")
