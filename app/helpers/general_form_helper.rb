@@ -45,7 +45,7 @@ module GeneralFormHelper
     else
       tag.div class: ['input_container', form_fields.map(&:field_name).map{|field| "#{field}_container"}, form_fields.map(&:field_type).map{|field| "#{field}_container"}].flatten.uniq.join(' ') do
         form_fields.each do |field|
-          unless field.privileges.present? && !@current_user.privileges?(field.privileges)
+          unless field.privileges.present? && !current_user.privileges?(field.privileges)
             text = field.text.present? ? field.text : field.field_name
             span_content = record.class.human_attribute_name(text) unless field.hide_name
             span_content = tag.a(span_content, href: '') if field.text_type == :link
