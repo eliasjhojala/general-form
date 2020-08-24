@@ -20,7 +20,7 @@ module Fields
   def permit_fields(fields)
     permitted_fields = [:id]
     flat_fields(fields).each do |name, field|
-      unless field.privileges.present? && !@current_user.privileges?(field.privileges)
+      unless field.privileges.present? && !current_user.privileges?(field.privileges)
         permitted_fields << name
       end
     end
@@ -37,7 +37,7 @@ module Fields
     ]
     special_fields.each do |fields|
       fields&.each do |name, field|
-        unless field.privileges.present? && !@current_user.privileges?(field.privileges)
+        unless field.privileges.present? && !current_user.privileges?(field.privileges)
           permitted_fields.push(name => [])
         end
       end
