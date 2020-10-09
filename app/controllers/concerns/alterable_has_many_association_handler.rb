@@ -33,6 +33,10 @@ module AlterableHasManyAssociationHandler
       
       prevent_activerecord_import = run_callbacks || habtm_field_names_.any? || flags_select_field_names_.any? || file_and_files_fields_names_.any?
       
+      if prevent_activerecord_import
+        items_association_by_id = associated_object.map { |item| [item.id, item] }.to_h
+      end
+      
       # Loop through all the items and either run commands on them or just initialize them for commands to be run later
       items[item_array_name].each do |item|
         item_id = item[id_field_name].present? ? item[id_field_name].to_i : nil
@@ -44,7 +48,7 @@ module AlterableHasManyAssociationHandler
               items_relation_hash[item_id]&.assign_attributes(permitted_params)
               items_to_save << items_relation_hash[item_id] if items_relation_hash[item_id]&.changed?
             else
-              item_class.find(item_id).update(permitted_params)
+              items_association_by_id[item_id]&.update permitted_params
             end
           elsif options[:only_insert].blank? # If item should be deleted --> delete it
             item_ids_to_delete << item_id
