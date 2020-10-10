@@ -70,18 +70,19 @@ module GeneralFormHelper
     field_name = form_field.field_name
     field_type = form_field.field_type || :default
     field_name_translated = record.class.human_attribute_name(field_name) unless [:check_box, :only_value, :only_value_as_date, :title_only_value, :hidden].include?(field_type) || record.nil?
+    autocomplete = form_field.autocomplete || field_name
     if field_name.present?
 
       case field_type
-      when :default; f.text_field field_name, class: field_name, placeholder: field_name_translated, 'autocomplete': field_name
-      when :password; f.password_field field_name, class: field_name, placeholder: field_name_translated
-      when :title; f.text_field field_name, class: "#{field_name} title", placeholder: field_name_translated, 'autocomplete': field_name
-      when :subtitle; f.text_field field_name, class: "#{field_name} subtitle", placeholder: field_name_translated, 'autocomplete': field_name
+      when :default; f.text_field field_name, class: field_name, placeholder: field_name_translated, 'autocomplete': autocomplete
+      when :password; f.password_field field_name, class: field_name, placeholder: field_name_translated, 'autocomplete': form_field.autocomplete
+      when :title; f.text_field field_name, class: "#{field_name} title", placeholder: field_name_translated, 'autocomplete': autocomplete
+      when :subtitle; f.text_field field_name, class: "#{field_name} subtitle", placeholder: field_name_translated, 'autocomplete': autocomplete
       when :check_box; f.check_box(field_name, class: field_name, include_hidden: options[:is_part_of_alterable_has_many_association].blank?) + f.label(field_name, "<span>check_box_outline_blank</span><span>check_box</span>".html_safe, class: "material-icons #{field_name}")
       when :text_area; f.text_area field_name, class: field_name, placeholder: field_name_translated
       when :trix_editor; tag.div(f.trix_editor(field_name, class: field_name, placeholder: field_name_translated), class: 'trix-container')
       when :datepicker; f.text_field field_name, class: "#{field_name} datepicker", value: (f.object[field_name].strftime('%-d.%-m.%Y') rescue f.object[field_name]), placeholder: field_name_translated
-      when :phone_number; f.text_field field_name, class: "#{field_name} phone_number", placeholder: field_name_translated, 'autocomplete': field_name, value: Phone.readable(f.object[field_name])
+      when :phone_number; f.text_field field_name, class: "#{field_name} phone_number", placeholder: field_name_translated, 'autocomplete': autocomplete, value: Phone.readable(f.object[field_name])
       when :disabled; f.text_field field_name, class: "#{field_name} disabled"
       when :disabled_date; f.text_field field_name, class: "#{field_name} disabled", value: (f.object[field_name].strftime('%-d.%-m.%Y') rescue f.object[field_name])
       when :function; text_field_tag field_name, record.send(field_name), class: "#{field_name} disabled"
@@ -92,7 +93,7 @@ module GeneralFormHelper
       when :only_value_as_date; tag.span((l f.object[field_name] rescue nil), class: 'only_value_span')
       when :title_only_value; tag.span f.object.send(field_name).to_s, class: 'only_value_span title'
       when :label; f.label field_name, "<span>check_box_outline_blank</span><span>check_box</span>".html_safe, class: 'material-icons'
-      when :number; f.text_field field_name, class: field_name, placeholder: field_name_translated, 'autocomplete': field_name, type: 'number'
+      when :number; f.text_field field_name, class: field_name, placeholder: field_name_translated, 'autocomplete': autocomplete, type: 'number'
       when :file; single_file_field(f, record, attachment_name: field_name, replace_instead_of_delete: true, direct_upload: form_field.direct_upload)
       when :files; default_file_field(f, record, files_name: field_name, direct_upload: form_field.direct_upload)
       when :select
@@ -101,7 +102,7 @@ module GeneralFormHelper
         unless form_field.select_options.present?
           options = enum_options_for_select(record, field_name)
           if options.present?
-            f.select field_name, options, {include_blank: prompt}, {class: field_name, 'autocomplete': field_name, multiple: form_field.multiple, disabled: form_field.disabled }
+            f.select field_name, options, {include_blank: prompt}, {class: field_name, 'autocomplete': autocomplete, multiple: form_field.multiple, disabled: form_field.disabled }
           end
         else
           form_field.options_name ||= "name"
@@ -122,7 +123,7 @@ module GeneralFormHelper
           unless options.is_a? ActiveSupport::SafeBuffer
             options = options_from_collection_for_select(options, "id", form_field.options_name, record.send(field_name.to_s))
           end
-          f.select field_name, options, {include_blank: prompt}, {class: field_name, 'autocomplete': field_name, multiple: form_field.multiple, disabled: form_field.disabled }
+          f.select field_name, options, {include_blank: prompt}, {class: field_name, 'autocomplete': autocomplete, multiple: form_field.multiple, disabled: form_field.disabled }
         end
       when :collection_select
         form_field.options_name ||= "name"
@@ -139,7 +140,7 @@ module GeneralFormHelper
         end
         options = policy_scope(options) if form_field.no_policy_scope.blank?
         form_field.options_name ||= "name"
-        f.select field_name, options_from_collection_for_select(options, "id", form_field.options_name, value), {:include_blank => "-"}, {class: field_name, 'autocomplete': field_name, multiple: form_field.multiple, disabled: form_field.disabled }
+        f.select field_name, options_from_collection_for_select(options, "id", form_field.options_name, value), {:include_blank => "-"}, {class: field_name, 'autocomplete': autocomplete, multiple: form_field.multiple, disabled: form_field.disabled }
       end
 
     end
