@@ -49,7 +49,7 @@ module ShowFormFieldsHelper
       when :default; record[field_name] or record.send(field_name).to_s
       when :check_box; record[field_name] or record.send(field_name).to_s
       when :text_area; record[field_name] or record.send(field_name).to_s
-      when :datepicker; date (record[field_name] or record.send(field_name).to_s)
+      when :datepicker, :date; date (record[field_name] or record.send(field_name).to_s)
       when :disabled; record[field_name] or record.send(field_name).to_s
       when :disabled_date; date (record[field_name] or record.send(field_name).to_s)
       when :function; record.send(field_name).to_s

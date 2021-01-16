@@ -10,24 +10,36 @@ $(document).on 'turbolinks:load', ->
 @formUrl = (form) ->
   $(form).attr 'action'
 
+@isDateSupported = ->
+  input = document.createElement('input')
+  value = 'a'
+  input.setAttribute 'type', 'date'
+  input.setAttribute 'value', value
+  input.value != value
+
+@setupDateFields = ->
+  unless isDateSupported()
+    date_fields = $('input[type="date"]')
+    datepicker_amount = date_fields.length
+    datepicker_ui_length = Math.ceil(datepicker_amount / 5)
+    date_fields.each ->
+      if datepicker_amount > 1
+        $(this).attr('id', "#{$(this).attr('id')}_datepicker_#{uniqueId(datepicker_ui_length)}")
+      $(this).datepicker 'destroy'
+      $(this).datepicker dateFormat: 'dd.mm.yy'
+      $(this).off('focus.blur').on 'focus.blur', ->
+        $(this).blur()
+        
+    # Render datepicker properly after back button press
+    $(document).on 'turbolinks:before-cache', ->
+      $.datepicker.dpDiv.remove()
+      date_fields.each ->
+        $(this).datepicker 'destroy'  
+    $(document).on 'turbolinks:before-render', ->
+      $.datepicker.dpDiv.appendTo(event.data.newBody)
+
 @loadForm = ->
-  datepicker_amount = $('.datepicker').length
-  datepicker_ui_length = Math.ceil(datepicker_amount / 5)
-  $('.datepicker').each ->
-    if datepicker_amount > 1
-      $(this).attr('id', "#{$(this).attr('id')}_datepicker_#{uniqueId(datepicker_ui_length)}")
-    $(this).datepicker 'destroy'
-    $(this).datepicker dateFormat: 'dd.mm.yy'
-    $(this).off('focus.blur').on 'focus.blur', ->
-      $(this).blur()
-      
-  # Render datepicker properly after back button press
-  $(document).on 'turbolinks:before-cache', ->
-    $.datepicker.dpDiv.remove()
-    $('.datepicker').each ->
-      $(this).datepicker 'destroy'  
-  $(document).on 'turbolinks:before-render', ->
-    $.datepicker.dpDiv.appendTo(event.data.newBody)
+  setupDateFields()
       
   checkbox_amount = $('.input_container.check_box_container').length
   if checkbox_amount > 1
