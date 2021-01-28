@@ -94,7 +94,7 @@ module GeneralFormHelper
       when :only_value_as_date; tag.span((l f.object[field_name] rescue nil), class: 'only_value_span')
       when :title_only_value; tag.span f.object.send(field_name).to_s, class: 'only_value_span title'
       when :label; f.label field_name, "<span>check_box_outline_blank</span><span>check_box</span>".html_safe, class: 'material-icons'
-      when :number; f.text_field field_name, class: field_name, placeholder: field_name_translated, 'autocomplete': autocomplete, type: 'number'
+      when :number; f.text_field field_name, class: field_name, placeholder: field_name_translated, 'autocomplete': autocomplete, type: 'number', step: 1.0 / (10**(form_field.scale || 0))
       when :file; single_file_field(f, record, attachment_name: field_name, replace_instead_of_delete: true, direct_upload: form_field.direct_upload)
       when :files; default_file_field(f, record, files_name: field_name, direct_upload: form_field.direct_upload)
       when :select
