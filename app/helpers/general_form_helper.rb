@@ -85,6 +85,7 @@ module GeneralFormHelper
       when :phone_number; f.text_field field_name, class: "#{field_name} phone_number", placeholder: field_name_translated, 'autocomplete': autocomplete, value: Phone.readable(f.object[field_name])
       when :disabled; f.text_field field_name, class: "#{field_name} disabled"
       when :disabled_date; f.text_field field_name, class: "#{field_name} disabled", value: (f.object[field_name].strftime('%-d.%-m.%Y') rescue f.object[field_name])
+      when :disabled_time; f.text_field field_name, class: "#{field_name} disabled", value: (f.object[field_name].strftime('%-d.%-m.%Y %H:%M') rescue f.object[field_name])
       when :function; text_field_tag field_name, record.send(field_name), class: "#{field_name} disabled"
       when :hidden; f.hidden_field field_name, class: field_name
       when :reset; f.hidden_field field_name
