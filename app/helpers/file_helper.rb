@@ -25,7 +25,7 @@ module FileHelper
       concat "<hr>Tiedostot: ".html_safe if options[:show_title]
 
       tag.table class: 'attachments' do
-        model.send(files_name).each do |attachment|
+        [model.send(files_name)].flatten.each do |attachment|
           concat (tag.tr data: { href: show_attachment_path(attachment.id), target: 'modal' } do
             concat (tag.td class: 'preview' do
               concat (
@@ -100,11 +100,12 @@ module FileHelper
     options[:attachment_name] ||= :attachment
     attachment = model.send(options[:attachment_name])
     if attachment.attached? && !options[:replace_instead_of_delete]
-      [link_to(attachment.filename, rails_blob_path(attachment, disposition: "inline"), target: "__blank"),
-      link_to('Poista', delete_attachment_path(attachment.id), method: :delete, **are_you_sure_confirm)].join(' ').html_safe
+      concat link_to(attachment.filename, rails_blob_path(attachment, disposition: "inline"), target: "__blank")
+      concat link_to('Poista', delete_attachment_path(attachment.id), method: :delete, **are_you_sure_confirm)
     else
-      f.file_field options[:attachment_name], multiple: false, **options.slice(:direct_upload)
+      concat f.file_field options[:attachment_name], multiple: false, **options.slice(:direct_upload)
     end
+    options[:preview] ? list_attached_files(model, show_delete: !options[:replace_instead_of_delete], files_name: options[:attachment_name]) : nil
   end
   
   def attachment_links attachments
