@@ -105,7 +105,7 @@ module FileHelper
     else
       concat f.file_field options[:attachment_name], multiple: false, **options.slice(:direct_upload)
     end
-    options[:preview] ? list_attached_files(model, show_delete: !options[:replace_instead_of_delete], files_name: options[:attachment_name]) : nil
+    options[:preview] ? list_attached_files(model, show_delete: true, files_name: options[:attachment_name]) : nil
   end
   
   def attachment_links attachments
