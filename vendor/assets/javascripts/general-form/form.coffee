@@ -23,6 +23,7 @@ $(document).on 'turbolinks:load', ->
     datepicker_amount = date_fields.length
     datepicker_ui_length = Math.ceil(datepicker_amount / 5)
     date_fields.each ->
+      $(this).val $(this).data('val')
       if datepicker_amount > 1
         $(this).attr('id', "#{$(this).attr('id')}_datepicker_#{uniqueId(datepicker_ui_length)}")
       $(this).datepicker 'destroy'

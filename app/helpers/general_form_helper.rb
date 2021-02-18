@@ -81,7 +81,7 @@ module GeneralFormHelper
       when :check_box; f.check_box(field_name, class: field_name, include_hidden: options[:is_part_of_alterable_has_many_association].blank?) + f.label(field_name, "<span>check_box_outline_blank</span><span>check_box</span>".html_safe, class: "material-icons #{field_name}")
       when :text_area; f.text_area field_name, class: field_name, placeholder: field_name_translated
       when :trix_editor; tag.div(f.trix_editor(field_name, class: field_name, placeholder: field_name_translated), class: 'trix-container')
-      when :datepicker, :date; f.date_field field_name, class: "#{field_name} datepicker", value: (f.object[field_name].strftime('%-d.%-m.%Y') rescue f.object[field_name]), placeholder: field_name_translated
+      when :datepicker, :date; f.date_field field_name, class: "#{field_name} datepicker", value: (f.object[field_name].strftime('%Y-%m-%d') rescue nil), data: { val: (f.object[field_name].strftime('%-d.%-m.%Y') rescue nil) }, placeholder: field_name_translated
       when :phone_number; f.text_field field_name, class: "#{field_name} phone_number", placeholder: field_name_translated, 'autocomplete': autocomplete, value: Phone.readable(f.object[field_name])
       when :disabled; f.text_field field_name, class: "#{field_name} disabled"
       when :disabled_date; f.text_field field_name, class: "#{field_name} disabled", value: (f.object[field_name].strftime('%-d.%-m.%Y') rescue f.object[field_name])
