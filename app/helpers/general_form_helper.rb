@@ -26,6 +26,12 @@ module GeneralFormHelper
     end
     nil # Prevent printing tabs.each (array)
   end
+
+  def allFormFieldsForAssoc(f, record, assoc, fields, **options)
+    f.fields_for assoc do |f_assoc|
+      allFormFields f_assoc, record.send(assoc), fields, **options
+    end
+  end
   
   def allFormFields(f, record, fields, **options)
     fields.each do |field|
