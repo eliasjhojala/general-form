@@ -54,11 +54,12 @@ module AlterableHasManyAssociationsHelper
     item_array_name ||= "#{associated_object.klass.name.pluralize.underscore}[]"
     item_class = options[:item_class]
     item_class ||= associated_object.klass
+    item_fields = options[:item_fields]
+    item_fields ||= item_class::DEFAULT_FORM_FIELDS rescue (item_class.to_s + 'Fields').constantize::DEFAULT rescue nil
     subjects = options[:subjects]
-    subjects ||= flat_fields(item_class::DEFAULT_FORM_FIELDS) rescue nil
+    subjects ||= flat_fields(item_fields) rescue nil
     form_name = options[:form_name]
     form_url = options[:form_url]
-    item_fields = options[:item_fields]
     disable_key_binds = "disable_key_binds" if options[:disable_key_binds]
     directly_downward_with_enter = "directly_downward_with_enter" if options[:directly_downward_with_enter]
     
