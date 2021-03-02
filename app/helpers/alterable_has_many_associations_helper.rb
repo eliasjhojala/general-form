@@ -12,7 +12,7 @@ module AlterableHasManyAssociationsHelper
     f.fields_for item_array_name, item_for_fields do |sif|
       tag.tr do
         concat sif.hidden_field :id, value: item.id
-        item_fields = (options[:item_fields] || item_class::DEFAULT_FORM_FIELDS)
+        item_fields = options[:item_fields] || GeneralForm.default_fields[item_class]
         item_fields.each do |field|
           concat tag.td(formFields(sif, item, field, is_part_of_alterable_has_many_association: true))
         end
@@ -55,7 +55,7 @@ module AlterableHasManyAssociationsHelper
     item_class = options[:item_class]
     item_class ||= associated_object.klass
     item_fields = options[:item_fields]
-    item_fields ||= item_class::DEFAULT_FORM_FIELDS rescue (item_class.to_s + 'Fields').constantize::DEFAULT rescue nil
+    item_fields ||= GeneralForm.default_fields[item_class]
     subjects = options[:subjects]
     subjects ||= flat_fields(item_fields) rescue nil
     form_name = options[:form_name]

@@ -4,7 +4,7 @@ module ShowAlterableHasManyAssociationsHelper
     item_class = options[:item_class]
     item = options[:item]
     fields = options[:fields]
-    fields ||= item_class::DEFAULT_FORM_FIELDS
+    fields ||= GeneralForm.default_fields[item_class]
 
     tag.tr do
       fields.each do |field|

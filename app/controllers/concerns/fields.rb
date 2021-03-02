@@ -26,7 +26,7 @@ module Fields
     end
     associated_fields(fields)&.each do |name, field|
       field = [field] unless field.class == Array
-      field.each { |f| f.associated_fields ||= f.associated_model::DEFAULT_FORM_FIELDS }
+      field.each { |f| f.associated_fields ||= GeneralForm.default_fields[f.associated_model] }
       permitted_fields.push("#{name}_attributes" => permit_fields(field.map(&:associated_fields)))
     end
     special_fields = [

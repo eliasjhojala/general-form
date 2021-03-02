@@ -11,7 +11,7 @@ module ShowFormFieldsHelper
     form_fields = standardize_form_fields form_fields
     if form_fields.count() == 1 && form_fields[0].field_type == :associated_fields
       associated_fields = form_fields[0].associated_fields
-      associated_fields ||= form_fields[0].associated_model::DEFAULT_FORM_FIELDS
+      associated_fields ||= GeneralForm.default_fields[form_fields[0].associated_model]
       show_all_form_fields((form_fields[0].associated_model.find(record["#{form_fields[0].field_name}_id"]) rescue form_fields[0].associated_model.new), associated_fields)
     else
       fields_name ||= "fields"

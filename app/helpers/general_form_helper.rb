@@ -45,7 +45,7 @@ module GeneralFormHelper
     if form_fields.count() == 1 && form_fields[0].field_type == :associated_fields
       f.fields_for form_fields[0].field_name do |ff|
         associated_fields = form_fields[0].associated_fields
-        associated_fields ||= form_fields[0].associated_model::DEFAULT_FORM_FIELDS
+        associated_fields ||= GeneralForm.default_fields[form_fields[0].associated_model]
         allFormFields(ff, record.send(form_fields[0].field_name), associated_fields, **options)
       end
     else
@@ -193,7 +193,7 @@ module GeneralFormHelper
   end
   
   def general_form_with_fields_for record, fields = nil, &block
-    fields ||= record.class::DEFAULT_FORM_FIELDS
+    fields ||= GeneralForm.default_fields[record.class]
     concat list_errors record
     form_for record, html: { class: 'general' } do |f|
       concat allFormFields f, record, fields
