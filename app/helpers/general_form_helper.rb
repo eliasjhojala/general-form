@@ -101,6 +101,7 @@ module GeneralFormHelper
       when :title_only_value; tag.span f.object.send(field_name).to_s, class: 'only_value_span title'
       when :label; f.label field_name, "<span>check_box_outline_blank</span><span>check_box</span>".html_safe, class: 'material-icons'
       when :number; f.text_field field_name, class: field_name, placeholder: field_name_translated, 'autocomplete': autocomplete, type: 'number', step: 1.0 / (10**(form_field.scale || 0))
+      when :range; f.range_field field_name, class: field_name, min: form_field.min, max: form_field.max, step: form_field.step
       when :file; single_file_field(f, record, attachment_name: field_name, replace_instead_of_delete: true, preview: form_field.preview, direct_upload: form_field.direct_upload)
       when :files; default_file_field(f, record, files_name: field_name, direct_upload: form_field.direct_upload)
       when :select
