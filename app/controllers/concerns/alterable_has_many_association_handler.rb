@@ -1,10 +1,12 @@
 module AlterableHasManyAssociationHandler
   
   def handle_alterable_has_many_association **options
-    associated_object = options[:associated_object] || options[:association] || options[:assoc]
+    association = options[:associated_object] || options[:association] || options[:assoc]
+    is_real_association = (options.keys & [:associated_object, :association, :assoc]).any?
     items = options[:items]
-    item_class = options[:item_class] || associated_object.klass
-    item_array_name = options[:item_array_name] || "#{associated_object.klass.name.pluralize.underscore}"
+    item_class = options[:item_class] || association.klass
+    association ||= item_class.all
+    item_array_name = options[:item_array_name] || "#{association.klass.name.pluralize.underscore}"
     existence_field_name = options[:existence_field_name] || options[:existence_field]
     id_field_name = options[:id_field_name] || :id
     fields = options[:item_fields] || GeneralForm.default_fields[item_class]
@@ -15,16 +17,10 @@ module AlterableHasManyAssociationHandler
     
     ActiveRecord::Base.transaction do
     
-      # Start by defining objects to store items to save and delete. These are needed only if callbaks haven't to be run.
-      # Load all items
-      items_relation = item_class.all.where(id: items[item_array_name].map{|obj|obj[:id]}.compact)
-      items_relation_hash = items_relation.map { |obj| [obj.id, obj] }.to_h
-      
       # Initialize arrays for inserts, updates and deletes
       items_to_save = []
       item_ids_to_delete = []
-      
-      
+        
       flat_fields_ = flat_fields(fields)
       habtm_field_names_ = habtm_field_names(fields)
       flags_select_field_names_ = flags_select_fields(fields).keys
@@ -34,7 +30,12 @@ module AlterableHasManyAssociationHandler
       prevent_activerecord_import = run_callbacks || habtm_field_names_.any? || flags_select_field_names_.any? || file_and_files_fields_names_.any?
       
       if prevent_activerecord_import
-        items_association_by_id = associated_object.map { |item| [item.id, item] }.to_h
+        items_association_by_id = association.map { |item| [item.id, item] }.to_h
+      else
+        # Define objects to store items to save and delete. These are needed only if callbaks haven't to be run.
+        # Load all items
+        items_relation = item_class.all.where(id: items[item_array_name].map{|obj|obj[:id]}.compact)
+        items_relation_hash = items_relation.map { |obj| [obj.id, obj] }.to_h
       end
       
       # Loop through all the items and either run commands on them or just initialize them for commands to be run later
@@ -55,8 +56,8 @@ module AlterableHasManyAssociationHandler
           end
         elsif item[existence_field_name].present? # If item is new and not empty --> create it
           new_item = item_class.new(permitted_params)
-          if (options.keys & [:associated_object, :association, :assoc]).any? # If item should be associated to parent object
-            associated_object << new_item
+          if is_real_association # If item should be associated to parent object
+            association << new_item
           else # If item shouldn't be associated to parent object
             unless prevent_activerecord_import
               items_to_save << new_item
