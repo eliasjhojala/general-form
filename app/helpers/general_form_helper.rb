@@ -120,16 +120,21 @@ module GeneralFormHelper
           else
             if form_field.select_options.respond_to? :call
               options = form_field.select_options[]
-              options = policy_scope(options) if use_policy_scope
             elsif form_field.select_options.is_a? Range
               options = options_for_select(form_field.select_options.map {|i| [i,i] }, record.send(field_name.to_s))
             else
               options = form_field.select_options
-              options = policy_scope(options) if use_policy_scope
+            end
+            if form_field.polymorphic
+              options = options.map { |x| policy_scope(x) } if use_policy_scope
+              options = options.sum
+            elsif use_policy_scope
+              options = policy_scope(options)
             end
           end
           unless options.is_a? ActiveSupport::SafeBuffer
-            options = options_from_collection_for_select(options, "id", form_field.options_name, record.send(field_name.to_s))
+            id_field = !form_field.polymorphic ? 'id' : 'global_id'
+            options = options_from_collection_for_select(options, id_field, form_field.options_name, record.send(field_name.to_s))
           end
           f.select field_name, options, {include_blank: prompt}, {class: field_name, 'autocomplete': autocomplete, multiple: form_field.multiple, disabled: form_field.disabled }
         end
