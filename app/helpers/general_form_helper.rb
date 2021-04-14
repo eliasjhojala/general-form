@@ -170,11 +170,8 @@ module GeneralFormHelper
     tag.span(text, class: 'text_span')
   end
 
-  def translated_flag_pairs class_, flags_name
-    flag_pairs = class_.send(flags_name).pairs
-    flag_pairs = flag_pairs.invert
-    flag_pairs.each { |k, v| flag_pairs[k] = class_.translate_enum(flags_name, k) }
-    flag_pairs.invert
+  def translated_flag_pairs klass, flags_name
+    klass.send(flags_name).keys.to_h { |k| [klass.translate_enum(flags_name, k), k] }
   end
 
   def form_tag_if condition, *options_array, **options_hash
