@@ -39,7 +39,7 @@ module GeneralFormHelper
     end
     return
   end
-  
+
   def formFields(f, record, form_fields, **options)
     form_fields = standardize_form_fields form_fields
     if form_fields.count() == 1 && form_fields[0].field_type == :associated_fields
@@ -49,7 +49,7 @@ module GeneralFormHelper
         allFormFields(ff, record.send(form_fields[0].field_name), associated_fields, **options)
       end
     else
-      if form_fields.count != 1 || form_fields.first.field_type != :custom
+      if form_fields.count != 1 || !form_fields.first.field_type.in?([:custom, :flags_check_boxes])
         tag.div class: ['input_container', form_fields.map(&:field_name).map{|field| "#{field}_container"}, form_fields.map(&:field_type).map{|field| "#{field}_container"}].flatten.uniq.join(' ') do
           form_fields.each do |field|
             unless field.privileges.present? && !current_user.privileges?(field.privileges)
@@ -65,7 +65,12 @@ module GeneralFormHelper
             end
           end
         end
-      else
+      elsif form_fields.first.field_type == :flags_check_boxes
+        form_fields.each do |field|
+          concat formField(f, record, field, **options)
+        end
+        nil
+      elsif form_fields.first.field_type == :custom_fields
         options.dig(:custom_fields, form_fields.first.field_name)
       end
     end
@@ -154,6 +159,12 @@ module GeneralFormHelper
         options = policy_scope(options) if form_field.no_policy_scope.blank?
         form_field.options_name ||= "name"
         f.select field_name, options_from_collection_for_select(options, "id", form_field.options_name, value), {:include_blank => "-"}, {class: field_name, 'autocomplete': autocomplete, multiple: form_field.multiple, disabled: form_field.disabled }
+      when :flags_check_boxes
+        f.collection_check_boxes(field_name, translated_flag_pairs(record.class, field_name), :last, :first) do |b|
+          concat (tag.div class: ['input_container', "#{field_name}_container", "#{field_type}_container"].flatten.uniq.join(' ') do
+            concat b.check_box + b.label(class: 'material-icons') { '<span>check_box_outline_blank</span><span>check_box</span>'.html_safe } + tag.span(b.text, class: 'text_span')
+          end)
+        end
       end
 
     end

@@ -33,7 +33,8 @@ module Fields
       files_fields(fields),
       multiple_select_fields(fields),
       collection_select_fields(fields),
-      flags_select_fields(fields)
+      flags_select_fields(fields),
+      flags_check_boxes_fields(fields)
     ]
     special_fields.each do |fields|
       fields&.each do |name, field|
@@ -89,6 +90,10 @@ module Fields
   
   def check_box_fields(fields)
     flat_fields(fields).select { |k,v| v.field_type == :check_box }
+  end
+
+  def flags_check_boxes_fields(fields)
+    flat_fields(fields).select { |k,v| v.field_type == :flags_check_boxes }
   end
   
 end
