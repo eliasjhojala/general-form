@@ -33,7 +33,8 @@ module GeneralFormHelper
     end
   end
   
-  def allFormFields(f, record, fields, **options)
+  def allFormFields(f, record, fields = nil, **options)
+    fields ||= GeneralForm.default_fields[record.class]
     fields.each do |field|
       concat formFields(f, record, field, **options)
     end
