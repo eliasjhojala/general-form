@@ -15,7 +15,10 @@ form.general, .general_show_form_fields_container {
       span.text_span, input, select, textarea { font-size: 14px; }
     }
     @media screen and (max-width: 800px) { span.text_span { width: 180px; } }
-    input, select, textarea, .trix-container { width: calc(100% - 180px); }
+    input, select, textarea, .trix-container {
+      width: calc(100% - 180px);
+      min-width: 16em;
+    }
     width: 100%;
     max-width: 1000px;
 
@@ -220,6 +223,25 @@ form.general, .general_show_form_fields_container {
       width: 100%;
     }
 
+  }
+
+  .date_and_time_container {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    span.text_span {
+      flex-shrink: 0;
+    }
+    input {
+      width: calc((100% - 180px - .5em) / 2);
+    }
+    input.date {
+      min-width: 9em;
+    }
+    input.time {
+      min-width: 6em;
+      margin-left: .5em;
+    }
   }
 
 }

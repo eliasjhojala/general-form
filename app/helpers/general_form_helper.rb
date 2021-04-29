@@ -94,6 +94,8 @@ module GeneralFormHelper
       when :text_area; f.text_area field_name, class: field_name, placeholder: field_name_translated
       when :trix_editor; tag.div(f.trix_editor(field_name, class: field_name, placeholder: field_name_translated), class: 'trix-container')
       when :datepicker, :date; f.date_field field_name, class: "#{field_name} datepicker", value: (f.object[field_name].strftime('%Y-%m-%d') rescue nil), data: { val: (f.object[field_name].strftime('%-d.%-m.%Y') rescue nil) }, placeholder: field_name_translated
+      when :time; f.time_field field_name, class: "#{field_name} time", value: (f.object[field_name].strftime('%H:%M') rescue nil), data: { val: (f.object[field_name].strftime('%H:%M') rescue nil) }, placeholder: field_name_translated
+      when :date_and_time; [:date, :time].sum { formField(f, record, GeneralForm::Field.new(field_name: "#{field_name}_#{_1}", type: _1)) }
       when :phone_number; f.text_field field_name, class: "#{field_name} phone_number", placeholder: field_name_translated, 'autocomplete': autocomplete, value: Phone.readable(f.object[field_name])
       when :disabled; f.text_field field_name, class: "#{field_name} disabled"
       when :disabled_date; f.text_field field_name, class: "#{field_name} disabled", value: (f.object[field_name].strftime('%-d.%-m.%Y') rescue f.object[field_name])

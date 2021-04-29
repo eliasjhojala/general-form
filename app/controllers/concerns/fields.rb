@@ -29,6 +29,9 @@ module Fields
       field.each { |f| f.associated_fields ||= GeneralForm.default_fields[f.associated_model] }
       permitted_fields.push("#{name}_attributes" => permit_fields(field.map(&:associated_fields)))
     end
+    date_and_time_fields(fields)&.each do |name, field|
+      permitted_fields += [:date, :time].map { "#{name}_#{_1}" }
+    end
     special_fields = [
       files_fields(fields),
       multiple_select_fields(fields),
@@ -94,6 +97,10 @@ module Fields
 
   def flags_check_boxes_fields(fields)
     flat_fields(fields).select { |k,v| v.field_type == :flags_check_boxes }
+  end
+
+  def date_and_time_fields(fields)
+    flat_fields(fields).select { |k,v| v.field_type == :date_and_time }
   end
   
 end
