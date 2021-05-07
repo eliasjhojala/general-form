@@ -16,6 +16,8 @@ $(document).on 'turbolinks:load', ->
     form.find('table tbody.fields').append form.find('#new-item-template').html()
     alterable_has_many_associations_scripts()
     loadSearchFieldsJs()
+    callback = form.data('add-item-callback')
+    window[callback]() if callback
     
   delete_item = (e, tr) ->
     e.preventDefault()

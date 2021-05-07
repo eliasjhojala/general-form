@@ -19,6 +19,7 @@ module AlterableHasManyAssociationHandler
     
       # Initialize arrays for inserts, updates and deletes
       items_to_save = []
+      saved_items = []
       item_ids_to_delete = []
         
       flat_fields_ = flat_fields(fields)
@@ -43,8 +44,9 @@ module AlterableHasManyAssociationHandler
         item_id = item[id_field_name].present? ? item[id_field_name].to_i : nil
         permitted_params = item.permit(params_to_permit).except(habtm_field_names_)
         check_box_fields_names_.each { |field| permitted_params[field] ||= false } # In normal form there would be hidden 0-field to do this, but it doesn't work correct with form containing has-many-association
+        should_be_kept = (existence_field_name == :any_field && item.except(:id).values.any?(&:present?)) || item[existence_field_name].present?
         if item_id.present? # If item is not new --> update it
-          if item[existence_field_name].present? # If item should be kept --> update it
+          if should_be_kept # If item should be kept --> update it
             unless prevent_activerecord_import
               items_relation_hash[item_id]&.assign_attributes(permitted_params)
               items_to_save << items_relation_hash[item_id] if items_relation_hash[item_id]&.changed?
@@ -54,10 +56,11 @@ module AlterableHasManyAssociationHandler
           elsif options[:only_insert].blank? # If item should be deleted --> delete it
             item_ids_to_delete << item_id
           end
-        elsif item[existence_field_name].present? # If item is new and not empty --> create it
+        elsif should_be_kept # If item is new and not empty --> create it
           new_item = item_class.new(permitted_params)
           if is_real_association # If item should be associated to parent object
             association << new_item
+            saved_items << new_item
           else # If item shouldn't be associated to parent object
             unless prevent_activerecord_import
               items_to_save << new_item
@@ -79,6 +82,8 @@ module AlterableHasManyAssociationHandler
           item_class.where(id: item_ids_to_delete).destroy_all
         end
       end
+
+      items_to_save + saved_items
       
     end # transaction
   end # method

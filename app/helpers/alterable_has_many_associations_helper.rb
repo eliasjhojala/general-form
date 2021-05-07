@@ -62,8 +62,9 @@ module AlterableHasManyAssociationsHelper
     form_url = options[:form_url]
     disable_key_binds = "disable_key_binds" if options[:disable_key_binds]
     directly_downward_with_enter = "directly_downward_with_enter" if options[:directly_downward_with_enter]
+    add_item_callback = options[:add_item_callback]
     
-    tag.div(class: "alterable_has_many_associations_form #{disable_key_binds} #{directly_downward_with_enter}") do
+    tag.div(class: "alterable_has_many_associations_form #{disable_key_binds} #{directly_downward_with_enter}", **(add_item_callback ? { data: { add_item_callback: add_item_callback } } : {})) do
       general_table do
         tag.tbody(class: "fields") do
           tag.tr(class: "subjectRow") do
