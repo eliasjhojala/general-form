@@ -136,7 +136,7 @@ module GeneralFormHelper
             if form_field.polymorphic
               options = options.map { |x| policy_scope(x) } if use_policy_scope
               options = options.sum
-            elsif use_policy_scope
+            elsif use_policy_scope && !options.is_a? ActiveSupport::SafeBuffer
               options = policy_scope(options)
             end
           end
