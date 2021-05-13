@@ -71,7 +71,7 @@ module GeneralFormHelper
           concat formField(f, record, field, **options)
         end
         nil
-      elsif form_fields.first.field_type == :custom_fields
+      elsif form_fields.first.field_type == :custom
         options.dig(:custom_fields, form_fields.first.field_name)
       end
     end
