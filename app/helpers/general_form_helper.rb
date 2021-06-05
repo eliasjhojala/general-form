@@ -198,9 +198,9 @@ module GeneralFormHelper
     end
   end
 
-  def list_errors record
+  def list_errors record, **options
     if record&.errors&.any?
-      concat tag.span t('general.words.errors'), class: 'errors-title'
+      concat tag.span t('general.words.errors'), class: 'errors-title' unless options[:no_title]
       tag.ul class: 'errors' do
         record.errors.full_messages.each do |message|
           concat tag.li message
