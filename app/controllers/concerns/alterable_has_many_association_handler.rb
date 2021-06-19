@@ -6,7 +6,7 @@ module AlterableHasManyAssociationHandler
     items = options[:items]
     item_class = options[:item_class] || association.klass
     association ||= item_class.all
-    item_array_name = options[:item_array_name] || "#{association.klass.name.pluralize.underscore}"
+    item_array_name = options[:item_array_name] || "#{association.klass.name.demodulize.pluralize.underscore}"
     existence_field_name = options[:existence_field_name] || options[:existence_field]
     id_field_name = options[:id_field_name] || :id
     fields = options[:item_fields] || GeneralForm.default_fields[item_class]
