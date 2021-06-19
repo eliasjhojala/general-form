@@ -7,7 +7,7 @@ module AlterableHasManyAssociationHandler
     item_class = options[:item_class] || association.klass
     association ||= item_class.all
     item_array_name = options[:item_array_name] || "#{association.klass.name.demodulize.pluralize.underscore}"
-    existence_field_name = options[:existence_field_name] || options[:existence_field]
+    existence_field_name = options[:existence_field_name] || options[:existence_field] || :any_field
     id_field_name = options[:id_field_name] || :id
     fields = options[:item_fields] || GeneralForm.default_fields[item_class]
     params_to_permit = (options[:params_to_permit] || permit_fields(fields)) | [:id]
