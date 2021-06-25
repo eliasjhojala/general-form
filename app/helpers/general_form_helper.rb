@@ -93,19 +93,19 @@ module GeneralFormHelper
       when :check_box; f.check_box(field_name, class: field_name, include_hidden: options[:is_part_of_alterable_has_many_association].blank?) + f.label(field_name, "<span>check_box_outline_blank</span><span>check_box</span>".html_safe, class: "material-icons #{field_name}")
       when :text_area; f.text_area field_name, class: field_name, placeholder: field_name_translated
       when :trix_editor; tag.div(f.trix_editor(field_name, class: field_name, placeholder: field_name_translated), class: 'trix-container')
-      when :datepicker, :date; f.date_field field_name, class: "#{field_name} datepicker", value: (f.object[field_name].strftime('%Y-%m-%d') rescue nil), data: { val: (f.object[field_name].strftime('%-d.%-m.%Y') rescue nil) }, placeholder: field_name_translated
-      when :time; f.time_field field_name, class: "#{field_name} time", value: (f.object[field_name].strftime('%H:%M') rescue nil), data: { val: (f.object[field_name].strftime('%H:%M') rescue nil) }, placeholder: field_name_translated
+      when :datepicker, :date; f.date_field field_name, class: "#{field_name} datepicker", value: (f.object.send(field_name).strftime('%Y-%m-%d') rescue nil), data: { val: (f.object.send(field_name).strftime('%-d.%-m.%Y') rescue nil) }, placeholder: field_name_translated
+      when :time; f.time_field field_name, class: "#{field_name} time", value: (f.object.send(field_name).strftime('%H:%M') rescue nil), data: { val: (f.object.send(field_name).strftime('%H:%M') rescue nil) }, placeholder: field_name_translated
       when :date_and_time; [:date, :time].sum { formField(f, record, GeneralForm::Field.new(field_name: "#{field_name}_#{_1}", type: _1)) }
-      when :phone_number; f.text_field field_name, class: "#{field_name} phone_number", placeholder: field_name_translated, 'autocomplete': autocomplete, value: Phone.readable(f.object[field_name])
+      when :phone_number; f.text_field field_name, class: "#{field_name} phone_number", placeholder: field_name_translated, 'autocomplete': autocomplete, value: Phone.readable(f.object.send(field_name))
       when :disabled; f.text_field field_name, class: "#{field_name} disabled"
-      when :disabled_date; f.text_field field_name, class: "#{field_name} disabled", value: (f.object[field_name].strftime('%-d.%-m.%Y') rescue f.object[field_name])
-      when :disabled_time; f.text_field field_name, class: "#{field_name} disabled", value: (f.object[field_name].strftime('%-d.%-m.%Y %H:%M') rescue f.object[field_name])
+      when :disabled_date; f.text_field field_name, class: "#{field_name} disabled", value: (f.object.send(field_name).strftime('%-d.%-m.%Y') rescue f.object.send(field_name))
+      when :disabled_time; f.text_field field_name, class: "#{field_name} disabled", value: (f.object.send(field_name).strftime('%-d.%-m.%Y %H:%M') rescue f.object.send(field_name))
       when :function; text_field_tag field_name, record.send(field_name), class: "#{field_name} disabled"
       when :hidden; f.hidden_field field_name, class: field_name
       when :reset; f.hidden_field field_name
       when :only_text; ""
-      when :only_value; tag.span f.object[field_name].to_s, class: 'only_value_span'
-      when :only_value_as_date; tag.span((l f.object[field_name] rescue nil), class: 'only_value_span')
+      when :only_value; tag.span f.object.send(field_name).to_s, class: 'only_value_span'
+      when :only_value_as_date; tag.span((l f.object.send(field_name) rescue nil), class: 'only_value_span')
       when :title_only_value; tag.span f.object.send(field_name).to_s, class: 'only_value_span title'
       when :label; f.label field_name, "<span>check_box_outline_blank</span><span>check_box</span>".html_safe, class: 'material-icons'
       when :number; f.text_field field_name, class: field_name, placeholder: field_name_translated, 'autocomplete': autocomplete, type: 'number', step: 1.0 / (10**(form_field.scale || 0))
