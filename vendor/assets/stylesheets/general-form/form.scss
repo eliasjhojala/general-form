@@ -62,13 +62,23 @@ form.general, .general_show_form_fields_container {
 
   }
 
+  @mixin error-styles() {
+    border-color: $lightRed;
+    &:hover:not(:focus):not([disabled=disabled]) {
+      border: 1px solid $lightRed;
+    }
+  }
+
   .input_container div.field_with_errors, div.field_with_errors {
     display: inline;
     input, select, textarea, trix-editor {
-      border-color: $lightRed;
-      &:hover:not(:focus):not([disabled=disabled]) {
-        border: 1px solid $lightRed;
-      }
+      @include error-styles();
+    }
+  }
+
+  input, select, textarea, trix-editor {
+    &.error {
+      @include error-styles();
     }
   }
 
