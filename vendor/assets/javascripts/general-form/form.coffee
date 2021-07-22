@@ -1,6 +1,11 @@
 used_unique_ids = []
 
-$(document).on 'turbolinks:load', ->
+if turbolinksSupported()
+  $(document).on 'turbolinks:load', -> onLoad()
+else
+  $ -> onLoad()
+
+onLoad = ->
   loadForm()
   $('.add-item').click ->
     setTimeout ( -> @loadForm() ), 300
@@ -30,18 +35,19 @@ $(document).on 'turbolinks:load', ->
       $(this).datepicker dateFormat: 'dd.mm.yy'
       $(this).off('focus.blur').on 'focus.blur', ->
         $(this).blur()
-        
-    # Render datepicker properly after back button press
-    $(document).on 'turbolinks:before-cache', ->
-      $.datepicker.dpDiv.remove()
-      date_fields.each ->
-        $(this).datepicker 'destroy'  
-    $(document).on 'turbolinks:before-render', ->
-      $.datepicker.dpDiv.appendTo(event.data.newBody)
+
+    if turbolinksSupported()
+      # Render datepicker properly after back button press
+      $(document).on 'turbolinks:before-cache', ->
+        $.datepicker.dpDiv.remove()
+        date_fields.each ->
+          $(this).datepicker 'destroy'
+      $(document).on 'turbolinks:before-render', ->
+        $.datepicker.dpDiv.appendTo(event.data.newBody)
 
 @loadForm = ->
   setupDateFields()
-      
+
   checkbox_amount = $('.input_container.check_box_container').length
   if checkbox_amount > 1
     checkbox_uid_length = Math.ceil(checkbox_amount / 5)
@@ -51,7 +57,7 @@ $(document).on 'turbolinks:load', ->
       uid = uniqueId(checkbox_uid_length)
       $(label).attr('for', "#{$(label).attr('for')}_checkbox_#{uid}")
       $(checkbox).attr('id', "#{$(checkbox).attr('id')}_checkbox_#{uid}")
-    
+
 @uniqueId = (length) ->
   uid = randomId(length)
   if uid in used_unique_ids
