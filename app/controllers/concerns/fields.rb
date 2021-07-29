@@ -24,6 +24,11 @@ module Fields
         permitted_fields << name
       end
     end
+    localised_fields(fields).each do |name, field|
+      unless field.privileges.present? && !current_user.privileges?(field.privileges)
+        permitted_fields += I18n.available_locales.map { |locale| "#{field.field_name}_#{locale}" }
+      end
+    end
     associated_fields(fields)&.each do |name, field|
       field = [field] unless field.class == Array
       field.each { |f| f.associated_fields ||= GeneralForm.default_fields[f.associated_model] }
@@ -103,4 +108,8 @@ module Fields
     flat_fields(fields).select { |k,v| v.field_type == :date_and_time }
   end
   
+  def localised_fields(fields)
+    flat_fields(fields).select { |k,v| v.field_type.in?([:localised, :localised_text_area]) }
+  end
+
 end
