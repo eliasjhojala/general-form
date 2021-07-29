@@ -66,6 +66,7 @@ module GeneralFormHelper
         end
         nil
       elsif form_fields.first.field_type.in?([:localised, :localised_text_area])
+        field = form_fields.first
         unless field.privileges.present? && !current_user.privileges?(field.privileges)
           I18n.available_locales.each do |locale|
             concat (tag.div class: "#{input_container} #{form_fields[0].field_name}_container #{form_fields[0].field_type}_container" do
