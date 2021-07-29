@@ -68,16 +68,18 @@ module GeneralFormHelper
       elsif form_fields.first.field_type.in?([:localised, :localised_text_area])
         field = form_fields.first
         unless field.privileges.present? && !current_user.privileges?(field.privileges)
-          I18n.available_locales.each do |locale|
-            concat (tag.div class: "input_container #{form_fields[0].field_name}_container #{form_fields[0].field_type}_container" do
-              field_localised = field.dup
-              field_localised.field_name = :"#{field.field_name}_#{locale}"
-              field_localised.field_type = {localised: :default, localised_text_area: :text_area}[field.field_type]
-              options_with_postfix = options.merge(postfix: " (#{locale})")
-              beforeFormField(f, record, field, **options_with_postfix)
-              concat formField(f, record, field_localised, **options.merge(name_for_i18n: field.field_name))
-              concat afterFormField(f, record, field, **options_with_postfix)
-            end)
+          capture do
+            I18n.available_locales.each do |locale|
+              concat (tag.div class: "input_container #{form_fields[0].field_name}_container #{form_fields[0].field_type}_container" do
+                field_localised = field.dup
+                field_localised.field_name = :"#{field.field_name}_#{locale}"
+                field_localised.field_type = {localised: :default, localised_text_area: :text_area}[field.field_type]
+                options_with_postfix = options.merge(postfix: " (#{locale})")
+                concat beforeFormField(f, record, field, **options_with_postfix)
+                concat formField(f, record, field_localised, **options.merge(name_for_i18n: field.field_name))
+                concat afterFormField(f, record, field, **options_with_postfix)
+              end)
+            end
           end
         end
       elsif form_fields.first.field_type == :custom
