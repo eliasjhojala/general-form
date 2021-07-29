@@ -1,5 +1,5 @@
 module GeneralFormHelper
-  
+
   def standardize_form_fields fields
     if fields.is_a? GeneralForm::Field
       [fields]
@@ -9,7 +9,7 @@ module GeneralFormHelper
       fields
     end
   end
-  
+
   def standardize_form_field field
     if field.is_a? Symbol
       GeneralForm::Field.new(field_name: field)
@@ -17,7 +17,7 @@ module GeneralFormHelper
       field
     end
   end
-  
+
   def allFormFieldsWithTabs(f, record, tabs)
     tabs.each do |tab_name, fields|
       concat (tag.div class: "tab #{tab_name}" do
@@ -32,7 +32,7 @@ module GeneralFormHelper
       allFormFields f_assoc, record.send(assoc), fields, **options
     end
   end
-  
+
   def allFormFields(f, record, fields = nil, **options)
     fields ||= GeneralForm.default_fields[record.class]
     fields.each do |field|
@@ -50,19 +50,13 @@ module GeneralFormHelper
         allFormFields(ff, record.send(form_fields[0].field_name), associated_fields, **options)
       end
     else
-      if form_fields.count != 1 || !form_fields.first.field_type.in?([:custom, :flags_check_boxes])
+      if form_fields.count != 1 || !form_fields.first.field_type.in?([:custom, :flags_check_boxes, :localised, :localised_text_area])
         tag.div class: ['input_container', form_fields.map(&:field_name).map{|field| "#{field}_container"}, form_fields.map(&:field_type).map{|field| "#{field}_container"}].flatten.uniq.join(' ') do
           form_fields.each do |field|
             unless field.privileges.present? && !current_user.privileges?(field.privileges)
-              text = field.text.present? ? field.text : field.field_name
-              span_content = record.class.human_attribute_name(text) unless field.hide_name
-              span_content = tag.a(span_content, href: '') if field.text_type == :link
-              text_span = tag.span(span_content, class: "#{field.field_name} text_span")
-              
-              concat text_span unless field.hide_name || field.name_after
+              concat beforeFormField(f, record, field, **options)
               concat formField(f, record, field, **options)
-              concat text_span if field.name_after
-              concat tag.span(field.text_after.html_safe, class: "#{field.field_name} text_after text_span") if field.text_after
+              afterFormField(f, record, field, **options)
             end
           end
         end
@@ -71,9 +65,44 @@ module GeneralFormHelper
           concat formField(f, record, field, **options)
         end
         nil
+      elsif form_fields.first.field_type == :localised
+        unless field.privileges.present? && !current_user.privileges?(field.privileges)
+          I18n.available_locales.each do |locale|
+            field_localised = field.dup
+            field_localised.field_name = :"#{field_localised.field_name}_#{locale}"
+            options_with_postfix = options.merge(postfix: " (#{locale})")
+            beforeFormField(f, record, field, **options_with_postfix)
+            concat formField(f, record, field_localised, **options.merge(name_for_i18n: field.field_name))
+            afterFormField(f, record, field, **options_with_postfix)
+          end
+        end
       elsif form_fields.first.field_type == :custom
         options.dig(:custom_fields, form_fields.first.field_name)
       end
+    end
+  end
+
+  def textSpan(f, record, form_field, **options)
+    text = field.text.present? ? field.text : field.field_name
+    span_content = record.class.human_attribute_name(text) unless field.hide_name
+    span_content += options[:postfix] if options[:postfix].present?
+    span_content = tag.a(span_content, href: '') if field.text_type == :link
+
+    tag.span(span_content, class: "#{field.field_name} text_span")
+  end
+
+  def beforeFormField(f, record, form_field, **options)
+    unless field.hide_name || field.name_after
+      textSpan(f, record, form_field, **options)
+    end
+  end
+
+  def afterFormField(f, record, form_field, **options)
+    if field.name_after
+      concat textSpan(f, record, form_field, **options)
+    end
+    if field.text_after
+      tag.span(field.text_after.html_safe, class: "#{field.field_name} text_after text_span")
     end
   end
 
@@ -81,7 +110,7 @@ module GeneralFormHelper
     form_field = standardize_form_field form_field
     field_name = form_field.field_name
     field_type = form_field.field_type || :default
-    field_name_translated = record.class.human_attribute_name(field_name) unless [:check_box, :only_value, :only_value_as_date, :title_only_value, :hidden].include?(field_type) || record.nil?
+    field_name_translated = record.class.human_attribute_name(options[:name_for_i18n] || field_name) unless [:check_box, :only_value, :only_value_as_date, :title_only_value, :hidden].include?(field_type) || record.nil?
     autocomplete = form_field.autocomplete || field_name
     if field_name.present?
 
@@ -208,7 +237,7 @@ module GeneralFormHelper
       end
     end
   end
-  
+
   def general_form_with_fields_for record, fields = nil, &block
     fields ||= GeneralForm.default_fields[record.class]
     concat list_errors record
