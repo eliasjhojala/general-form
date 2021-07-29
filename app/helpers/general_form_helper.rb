@@ -83,7 +83,7 @@ module GeneralFormHelper
     end
   end
 
-  def textSpan(f, record, form_field, **options)
+  def textSpan(f, record, field, **options)
     text = field.text.present? ? field.text : field.field_name
     span_content = record.class.human_attribute_name(text) unless field.hide_name
     span_content += options[:postfix] if options[:postfix].present?
@@ -92,15 +92,15 @@ module GeneralFormHelper
     tag.span(span_content, class: "#{field.field_name} text_span")
   end
 
-  def beforeFormField(f, record, form_field, **options)
+  def beforeFormField(f, record, field, **options)
     unless field.hide_name || field.name_after
-      textSpan(f, record, form_field, **options)
+      textSpan(f, record, field, **options)
     end
   end
 
-  def afterFormField(f, record, form_field, **options)
+  def afterFormField(f, record, field, **options)
     if field.name_after
-      concat textSpan(f, record, form_field, **options)
+      concat textSpan(f, record, field, **options)
     end
     if field.text_after
       tag.span(field.text_after.html_safe, class: "#{field.field_name} text_after text_span")
