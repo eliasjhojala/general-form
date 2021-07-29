@@ -65,11 +65,12 @@ module GeneralFormHelper
           concat formField(f, record, field, **options)
         end
         nil
-      elsif form_fields.first.field_type == :localised
+      elsif form_fields.first.field_type == [:localised, :localised_text_area]
         unless field.privileges.present? && !current_user.privileges?(field.privileges)
           I18n.available_locales.each do |locale|
             field_localised = field.dup
-            field_localised.field_name = :"#{field_localised.field_name}_#{locale}"
+            field_localised.field_name = :"#{field.field_name}_#{locale}"
+            field_localised.field_type = {localised: :default, localised_text_area: :text_area}[field.field_type]
             options_with_postfix = options.merge(postfix: " (#{locale})")
             beforeFormField(f, record, field, **options_with_postfix)
             concat formField(f, record, field_localised, **options.merge(name_for_i18n: field.field_name))
