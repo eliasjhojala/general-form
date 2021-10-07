@@ -42,12 +42,12 @@ form.general, .general_show_form_fields_container {
     input[type="checkbox"] {
       display: none;
       &:checked + label {
-        color: #018786;
+        color: $general-form-checkbox-background;
         span:last-of-type { display: inline; }
         span:first-of-type { display: none; }
       }
       &.disabled:checked + label, &[disabled]:checked + label {
-        color: #757575;
+        color: $general-form-checkbox-background-disabled;
       }
     }
     .file_link, .only_value_span { display: inline-block; margin-top: 8px; margin-bottom: 8px; }
@@ -63,9 +63,9 @@ form.general, .general_show_form_fields_container {
   }
 
   @mixin error-styles() {
-    border-color: $lightRed;
+    border-color: $general-form-error-color;
     &:hover:not(:focus):not([disabled=disabled]) {
-      border: 1px solid $lightRed;
+      border: 1px solid $general-form-error-color;
     }
   }
 
@@ -91,7 +91,7 @@ form.general, .general_show_form_fields_container {
   input, textarea, select, trix-editor {
     display: block;
     font-family: inherit;
-    color: $grayBlack;
+    color: $general-form-input-color;
     font-size: 18px;
     padding: 4px;
     margin: 4px 0;
@@ -139,8 +139,8 @@ form.general, .general_show_form_fields_container {
 
   input[type=text], input[type=password], input[type="file"], textarea, trix-editor {
     &:focus {
-      box-shadow: 0px 0px 1px 1px $themeColor2;
-      border-color: $themeColor2;
+      box-shadow: 0px 0px 1px 1px $general-form-accent-color;
+      border-color: $general-form-accent-color;
     }
     &:hover:not(:focus):not([disabled=disabled]) {
       border: 1px solid rgb(140, 140, 140);
@@ -180,7 +180,7 @@ form.general, .general_show_form_fields_container {
     &::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      background: $background_blue;
+      background: $general-form-accent-color;
       width: 40px;
       height: 40px;
       border-radius: 100%;
@@ -216,7 +216,7 @@ form.general, .general_show_form_fields_container {
       margin-top: 0px; margin-bottom: 0px;
       width: 100%;
       font-weight: bold;
-      color: $grayBlack;
+      color: $general-form-input-color;
       &:hover:not(:focus) {
         border: none;
         box-shadow: 0px 0px 1px 1px rgb(140, 140, 140);

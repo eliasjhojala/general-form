@@ -35,16 +35,16 @@ form.general {
       box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
       color: white;
       font-size: 30px;
-      background: $background_blue;
+      background: $general-form-accent-color;
       transition-duration: 150ms;
       transition-timing-function: ease-in-out;
       &:hover {
         box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
-        background: $background_blue_hover;
+        background: $general-form-accent-color-hover;
       }
       &:active {
         box-shadow: 0 0 6px rgba(0, 0, 0, 0.16), 0 6px 12px rgba(0, 0, 0, 0.32);
-        background: $background_blue_active;
+        background: $general-form-accent-color-active;
       }
     }
     div.input_container {

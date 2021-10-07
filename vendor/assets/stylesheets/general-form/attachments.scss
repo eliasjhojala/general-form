@@ -9,7 +9,7 @@ table.attachments {
   }
   td.preview {
     text-align: center;
-    background: #B2EBF2;
+    background: $general-form-attachment-preview-background;
     border-radius: 5px;
     padding: 5px;
     height: 100px;
@@ -27,7 +27,7 @@ table.attachments {
     background: #ECEFF1;
     transition-duration: 150ms;
     td.preview {
-      background: #80DEEA;
+      background: $general-form-attachment-preview-background-hover;
     }
   }
 }
