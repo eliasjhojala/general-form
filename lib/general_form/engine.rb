@@ -2,7 +2,7 @@ module GeneralForm
   class Engine < Rails::Engine
   end
 
-  mattr_accessor :default_fields
+  mattr_accessor :default_fields, :use_form_floating
 
    def self.setup(&block)
      yield self
