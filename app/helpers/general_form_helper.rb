@@ -212,7 +212,7 @@ module GeneralFormHelper
 
       if GeneralForm.use_form_floating
         if floatable?(form_field, **options_)
-          tag.div class: 'form-floating' do
+          tag.div class: "form-floating for-#{field_name}" do
             concat field_plain
             if field_type == :text_area
               concat tag.div(class: 'padding')
@@ -239,15 +239,16 @@ module GeneralFormHelper
     end
   end
 
-  def form_floating_container name, placeholder, type: nil, &block
-    tag.div class: 'form-floating' do
-      concat yield
+  def form_floating_container name, placeholder, type: nil, wrap_with_input_container: true, &block
+    div = tag.div class: 'form-floating' do
+      yield
       if type == :text_area
         concat tag.div(class: 'padding')
         concat tag.div(class: 'visual-container')
       end
       concat label_tag(name, placeholder)
     end
+    wrap_with_input_container ? input_container { concat(div) } : div
   end
 
   def text_span(text)

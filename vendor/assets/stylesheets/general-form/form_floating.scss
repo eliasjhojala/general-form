@@ -5,6 +5,7 @@ form.general .form-floating,
   position: relative;
   display: flex;
   flex-direction: column-reverse;
+  background-color: white;
 
   > input,
   > textarea,
@@ -62,7 +63,7 @@ form.general .form-floating,
 
   > .padding {
     width: 100%;
-    height: 1.625em;
+    height: 1.685em;
     cursor: text;
   }
 
