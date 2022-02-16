@@ -9,7 +9,7 @@ form.general .form-floating,
   > input,
   > textarea,
   > select {
-    height: initial;
+    height: 3.62em;
     line-height: 1.25;
     font-size: 1em;
     display: block;
@@ -27,7 +27,7 @@ form.general .form-floating,
     top: 0;
     left: 0;
     height: 100%;
-    padding: 1em .75em;
+    padding: 1.27em .75em;
     pointer-events: none;
     border: 1px solid transparent;
     transform-origin: 0 0;
@@ -47,7 +47,7 @@ form.general .form-floating,
     }
   }
   > input {
-    padding: 1rem .75rem;
+    padding: 1.13em .75em;
 
     &:focus,
     &:not(:placeholder-shown) {
@@ -77,7 +77,7 @@ form.general .form-floating,
   }
 
   > textarea {
-    padding: 1rem .75rem;
+    padding: 1.13em .75em;
     padding-top: 0 !important;
     margin-top: 0;
     margin-bottom: 0;
@@ -99,7 +99,7 @@ form.general .form-floating,
   }
 
   > select {
-    padding: 1rem .75rem;
+    padding: 1.13em .75em;
     padding-top: 1.425em !important;
     padding-bottom: .25em !important;
     background-size: 1.75em;
