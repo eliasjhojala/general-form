@@ -167,10 +167,12 @@ module GeneralFormHelper
             else
               if form_field.select_options.respond_to? :call
                 options = form_field.select_options[]
+                options = policy_scope(options) if use_policy_scope
               elsif form_field.select_options.is_a? Range
                 options = options_for_select(form_field.select_options.map {|i| [i,i] }, record.send(field_name.to_s))
               else
                 options = form_field.select_options
+                options = policy_scope(options) if use_policy_scope
               end
               if form_field.polymorphic
                 options = options.map { |x| policy_scope(x) } if use_policy_scope
