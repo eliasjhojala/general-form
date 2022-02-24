@@ -153,7 +153,8 @@ module GeneralFormHelper
         when :files; default_file_field(f, record, files_name: field_name, direct_upload: form_field.direct_upload)
         when :select
           prompt = form_field.prompt.present? ? t("activerecord.prompts.#{record.class.name.underscore}.#{field_name}") : '-'
-          use_policy_scope = form_field.no_policy_scope.blank?
+          x = form_field.no_policy_scope
+          use_policy_scope = x.blank? || (x.respond_to?(:call) && x[].blank?)
           unless form_field.select_options.present?
             options = enum_options_for_select(record, field_name)
             if options.present?
