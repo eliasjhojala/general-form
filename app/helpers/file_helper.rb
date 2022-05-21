@@ -25,7 +25,7 @@ module FileHelper
       concat "<hr>Tiedostot: ".html_safe if options[:show_title]
 
       tag.table class: 'attachments' do
-        [model.send(files_name)].flatten.each do |attachment|
+        [model.send(files_name)].flatten.select(&:persisted?).each do |attachment|
           concat (tag.tr data: { href: show_attachment_path(attachment.id), target: 'modal' } do
             concat (tag.td class: 'preview' do
               concat (
