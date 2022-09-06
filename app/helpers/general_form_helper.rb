@@ -221,7 +221,7 @@ module GeneralFormHelper
               concat tag.div(class: 'padding')
               concat tag.div(class: 'visual-container')
             end
-            concat f.label(field_name, options_[:label_content])
+            concat f.label(field_name, options_[:label_content] || field_name_translated)
           end
         else
           tag.div class: 'non-floatable' do
