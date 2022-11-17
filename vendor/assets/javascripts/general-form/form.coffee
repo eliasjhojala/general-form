@@ -61,6 +61,12 @@ onLoad = ->
   $('select.select2:not([multiple="multiple"])').select2(width: '100%')
   $('select.select2[multiple="multiple"]').select2(placeholder: '', width: '100%')
 
+  if $('.form-floating .field_with_errors').length > 0
+    $('.form-floating .field_with_errors').closest('.form-floating').addClass 'errors'
+    $('.form-floating .field_with_errors').children().unwrap()
+
+
+
 @uniqueId = (length) ->
   uid = randomId(length)
   if uid in used_unique_ids

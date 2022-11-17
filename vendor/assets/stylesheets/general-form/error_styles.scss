@@ -1,0 +1,6 @@
+@mixin error-styles() {
+  border-color: $general-form-error-color;
+  &:hover:not(:focus):not([disabled=disabled]) {
+    border: 1px solid $general-form-error-color;
+  }
+}

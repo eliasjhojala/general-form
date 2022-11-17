@@ -1,4 +1,5 @@
 @import 'shared/library';
+@import 'error_styles';
 
 form.general .form-floating,
 .form-floating {
@@ -142,6 +143,25 @@ form.general .form-floating,
         padding-left: .35em !important;
         min-height: calc(28px + 1.75em + .5em) !important;
         margin-bottom: 0 !important;
+      }
+    }
+
+    &.errors {
+      input, select, textarea, trix-editor, .visual-container {
+        &, &:focus, &:hover, &:active {
+          @include error-styles();
+        }
+      }
+      .visual-container {
+        border-color: $general-form-error-color !important;
+      }
+      &.for-select2 {
+        .select2-selection.select2-selection--single,
+        .select2-selection.select2-selection--multiple {
+          &, &:focus, &:hover, &:active {
+            @include error-styles();
+          }
+        }
       }
     }
   }
