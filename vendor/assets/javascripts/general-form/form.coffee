@@ -58,6 +58,9 @@ onLoad = ->
       $(label).attr('for', "#{$(label).attr('for')}_checkbox_#{uid}")
       $(checkbox).attr('id', "#{$(checkbox).attr('id')}_checkbox_#{uid}")
 
+  $('select.select2:not([multiple="multiple"])').select2(width: '100%')
+  $('select.select2[multiple="multiple"]').select2(placeholder: '', width: '100%')
+
 @uniqueId = (length) ->
   uid = randomId(length)
   if uid in used_unique_ids

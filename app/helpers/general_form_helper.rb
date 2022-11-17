@@ -186,7 +186,9 @@ module GeneralFormHelper
               options_value = form_field.options_value || (!form_field.polymorphic ? 'id' : 'global_id')
               options = options_from_collection_for_select(options, options_value, form_field.options_name, record.send(field_name.to_s))
             end
-            f.select field_name, options, {include_blank: prompt}, {class: field_name, 'autocomplete': autocomplete, multiple: form_field.multiple, disabled: form_field.disabled }
+            klass = field_name.to_s
+            klass += ' select2' if form_field.select2 || form_field.multiple
+            f.select field_name, options, {include_blank: prompt}, {class: klass, 'autocomplete': autocomplete, multiple: form_field.multiple, disabled: form_field.disabled}
           end
         when :collection_select
           form_field.options_name ||= "name"
@@ -215,7 +217,9 @@ module GeneralFormHelper
 
       if GeneralForm.use_form_floating
         if floatable?(form_field, **options_)
-          tag.div class: "form-floating for-#{field_name}" do
+          klass = "form-floating for-#{field_name}"
+          klass += ' for-select2' if form_field.select2 || form_field.multiple
+          tag.div class: klass do
             concat field_plain
             if field_type == :text_area
               concat tag.div(class: 'padding')
@@ -311,7 +315,7 @@ module GeneralFormHelper
   def floatable? field, **options
     type = field.field_type || :default
     (type.in?([:default, :password, :title, :subtitle, :text_area, :datepicker, :date, :time, :phone_number, :disabled, :disabled_date, :disabled_time, :function, :number, :file, :files, :localised, :localised_text_area]) ||
-    type == :select && !field.multiple) && !options[:is_part_of_alterable_has_many_association]
+    type == :select) && !options[:is_part_of_alterable_has_many_association]
   end
 
 end

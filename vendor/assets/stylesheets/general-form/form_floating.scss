@@ -133,6 +133,17 @@ form.general .form-floating,
       }
     }
     // stylelint-enable no-duplicate-selectors
+
+    &.for-select2 {
+      .select2-selection.select2-selection--single,
+      .select2-selection.select2-selection--multiple {
+        padding-top: 1.75em !important;
+        padding-bottom: .5em !important;
+        padding-left: .35em !important;
+        min-height: calc(28px + 1.75em + .5em) !important;
+        margin-bottom: 0 !important;
+      }
+    }
   }
 }
 
