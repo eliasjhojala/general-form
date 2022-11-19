@@ -287,13 +287,13 @@ module GeneralFormHelper
     end
   end
 
-  def general_form_with_fields_for record, fields = nil, &block
+  def general_form_with_fields_for record, fields = nil, **options, &block
     fields ||= GeneralForm.default_fields[record.class]
     concat list_errors record
     form_for record, html: { class: 'general' } do |f|
       concat allFormFields f, record, fields
-      concat yield f if block_given?
-      concat f.submit
+      yield f if block_given?
+      concat f.submit unless options.key?(:submit) && !options[:submit]
     end
   end
 
