@@ -6,6 +6,7 @@ else
   $ -> onLoad()
 
 onLoad = ->
+  used_unique_ids = []
   loadForm()
   $('.add-item').click ->
     setTimeout ( -> @loadForm() ), 300
