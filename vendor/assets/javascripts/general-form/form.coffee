@@ -59,8 +59,12 @@ onLoad = ->
       $(label).attr('for', "#{$(label).attr('for')}_checkbox_#{uid}")
       $(checkbox).attr('id', "#{$(checkbox).attr('id')}_checkbox_#{uid}")
 
-  $('select.select2:not([multiple="multiple"])').select2(width: '100%')
-  $('select.select2[multiple="multiple"]').select2(placeholder: '', width: '100%')
+  unless select2_no_widths? && select2_no_widths
+    $('select.select2:not([multiple="multiple"])').select2(width: '100%')
+    $('select.select2[multiple="multiple"]').select2(placeholder: '', width: '100%')
+  else
+    $('select.select2:not([multiple="multiple"])').select2()
+    $('select.select2[multiple="multiple"]').select2(placeholder: '')
 
   if $('.form-floating .field_with_errors').length > 0
     $('.form-floating .field_with_errors').closest('.form-floating').addClass 'errors'
