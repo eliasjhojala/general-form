@@ -58,6 +58,7 @@ module AlterableHasManyAssociationsHelper
     item_fields ||= GeneralForm.default_fields[item_class]
     subjects = options[:subjects]
     subjects ||= flat_fields(item_fields) rescue nil
+    subjects_raw = options[:subjects_raw] || subjects.map { |s, f| [item_class.human_attribute_name(s), s] }
     form_name = options[:form_name]
     form_url = options[:form_url]
     disable_key_binds = "disable_key_binds" if options[:disable_key_binds]
@@ -68,8 +69,8 @@ module AlterableHasManyAssociationsHelper
       general_table do
         tag.tbody(class: "fields") do
           tag.tr(class: "subjectRow") do
-            subjects.each do |subject, field|
-              concat tag.th(item_class.human_attribute_name(subject), class: subject)
+            subjects_raw.each do |s, c|
+              concat tag.th(s, class: c)
             end
             if options[:delete_button]
               concat tag.th('')
