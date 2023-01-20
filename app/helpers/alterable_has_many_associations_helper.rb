@@ -50,8 +50,7 @@ module AlterableHasManyAssociationsHelper
     associated_object = options[:associated_object]
     associated_object ||= options[:association]
     associated_object ||= options[:assoc]
-    item_array_name = options[:item_array_name]
-    item_array_name ||= "#{associated_object.klass.name.pluralize.underscore}[]"
+    item_array_name = options[:item_array_name] || "#{associated_object.klass.name.demodulize.pluralize.underscore}[]"
     item_class = options[:item_class]
     item_class ||= associated_object.klass
     item_fields = options[:item_fields]
