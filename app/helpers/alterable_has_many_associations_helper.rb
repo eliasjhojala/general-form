@@ -6,7 +6,7 @@ module AlterableHasManyAssociationsHelper
     item_array_name = options[:item_array_name]
     item = options[:item]
     
-    item ||= item_class.new **options[:field_values] || {}
+    item ||= options[:new_item] || item_class.new(options[:field_values]) || {}
     item_for_fields = item.dup
     item_for_fields.id = nil
     f.fields_for item_array_name, item_for_fields do |sif|
@@ -79,7 +79,7 @@ module AlterableHasManyAssociationsHelper
               concat one_item(f: f, item: item, item_array_name: item_array_name, item_class: item_class, item_fields: item_fields, **options.slice(:delete_button))
             end
           end + capture do
-            concat one_item(f: f, item_array_name: item_array_name, item_class: item_class, item_fields: item_fields, **options.slice(:delete_button, :field_values)) unless associated_object.any?
+            concat one_item(f: f, item_array_name: item_array_name, item_class: item_class, item_fields: item_fields, **options.slice(:delete_button, :field_values, :new_item)) unless associated_object.any?
           end
         end + capture do
           concat tag.tr(tag.td(f.submit('Tallenna'), colspan: subjects.length)) if options[:show_submit]
@@ -87,7 +87,7 @@ module AlterableHasManyAssociationsHelper
         
       end + capture do
         concat add_button unless options[:hide_add_button]
-        concat tag.template(one_item(f: f, item_array_name: item_array_name, item_class: item_class, item_fields: item_fields, **options.slice(:delete_button, :field_values)), id: "new-item-template") unless options[:hide_add_button]
+        concat tag.template(one_item(f: f, item_array_name: item_array_name, item_class: item_class, item_fields: item_fields, **options.slice(:delete_button, :field_values, :new_item)), id: "new-item-template") unless options[:hide_add_button]
       end
       
     end
