@@ -46,8 +46,17 @@ onLoad = ->
       $(document).on 'turbolinks:before-render', ->
         $.datepicker.dpDiv.appendTo(event.data.newBody)
 
+@setupSelect2Ids = ->
+  select2_fields = $('select.select2')
+  select2_amount = select2_fields.length
+  select2_uid_length = Math.ceil(select2_amount / 5)
+  select2_fields.each ->
+    if select2_amount > 1
+      $(this).attr('id', "#{$(this).attr('id')}_select2_#{uniqueId(select2_uid_length)}")
+
 @loadForm = ->
   setupDateFields()
+  setupSelect2Ids()
 
   checkbox_amount = $('.input_container.check_box_container').length
   if checkbox_amount > 1
