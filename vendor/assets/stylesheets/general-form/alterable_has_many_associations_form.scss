@@ -15,7 +15,7 @@ form.general {
       tr {
         background: none;
         &:nth-child(even) {
-          input, select, .select2-selection {
+          input, textarea, select, .select2-selection {
             background-color: rgb(245,245,245);
           }
         }
