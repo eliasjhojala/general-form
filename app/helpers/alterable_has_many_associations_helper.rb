@@ -14,7 +14,7 @@ module AlterableHasManyAssociationsHelper
         concat sif.hidden_field :id, value: item.id
         item_fields = options[:item_fields] || GeneralForm.default_fields[item_class]
         item_fields.each do |field|
-          concat tag.td(formFields(sif, item, field, is_part_of_alterable_has_many_association: true))
+          concat tag.td(formFields(sif, item, field, is_part_of_alterable_has_many_association: true), class: [field].flatten.map(&:field_name))
         end
         if options[:delete_button]
           concat tag.td(link_to('delete', '', class: 'material-icons delete-button'))
