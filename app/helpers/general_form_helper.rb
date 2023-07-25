@@ -92,9 +92,17 @@ module GeneralFormHelper
     tag.span(label_content(f, record, field, **options), class: "#{field.field_name} text_span")
   end
 
+  def localised_field_name(record, field)
+    if field.localised_text.blank?
+      text = field.text.present? ? field.text : field.field_name
+      record.class.human_attribute_name(text) unless field.hide_name
+    else
+      field.localised_text
+    end
+  end
+
   def label_content(f, record, field, **options)
-    text = field.text.present? ? field.text : field.field_name
-    span_content = record.class.human_attribute_name(text) unless field.hide_name
+    span_content = localised_field_name(record, field) unless field.hide_name
     span_content += options[:postfix] if options[:postfix].present?
     span_content = tag.a(span_content, href: '') if field.text_type == :link
     span_content
@@ -120,7 +128,7 @@ module GeneralFormHelper
     form_field = standardize_form_field form_field
     field_name = form_field.field_name
     field_type = form_field.field_type || :default
-    field_name_translated = record.class.human_attribute_name(options[:name_for_i18n] || field_name) unless [:check_box, :only_value, :only_value_as_date, :title_only_value, :hidden].include?(field_type) || record.nil?
+    field_name_translated = localised_field_name(record, form_field) unless [:check_box, :only_value, :only_value_as_date, :title_only_value, :hidden].include?(field_type) || record.nil?
     autocomplete = form_field.autocomplete || field_name
     if field_name.present?
       field_plain = capture do
