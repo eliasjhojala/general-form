@@ -111,7 +111,7 @@ module GeneralFormHelper
       concat textSpan(f, record, field, **options)
     end
     if field.text_after
-      tag.span(field.text_after.html_safe, class: "#{field.field_name} text_after text_span")
+      concat tag.span(field.text_after.html_safe, class: "#{field.field_name} text_after text_span")
     end
   end
 
