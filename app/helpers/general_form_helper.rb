@@ -160,7 +160,8 @@ module GeneralFormHelper
         when :file; single_file_field(f, record, attachment_name: field_name, replace_instead_of_delete: true, preview: form_field.preview, direct_upload: form_field.direct_upload)
         when :files; default_file_field(f, record, files_name: field_name, direct_upload: form_field.direct_upload)
         when :select
-          prompt = form_field.prompt.present? ? t("activerecord.prompts.#{record.class.name.underscore}.#{field_name}") : '-'
+          prompt = form_field.prompt_translated
+          prompt ||= form_field.prompt.present? ? t("activerecord.prompts.#{record.class.name.underscore}.#{field_name}") : '-'
           x = form_field.no_policy_scope
           use_policy_scope = x.blank? || (x.respond_to?(:call) && x[].blank?)
           unless form_field.select_options.present?
