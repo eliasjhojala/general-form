@@ -131,6 +131,7 @@ module GeneralFormHelper
     field_name_translated = localised_field_name(record, form_field) unless [:check_box, :only_value, :only_value_as_date, :title_only_value, :hidden].include?(field_type) || record.nil?
     autocomplete = form_field.autocomplete || field_name
     if field_name.present?
+      use_select2 = false
       field_plain = capture do
         case field_type
         when :default; f.text_field field_name, class: field_name, placeholder: field_name_translated, 'autocomplete': autocomplete
@@ -195,8 +196,9 @@ module GeneralFormHelper
               options_value = form_field.options_value || (!form_field.polymorphic ? 'id' : 'global_id')
               options = options_from_collection_for_select(options, options_value, form_field.options_name, record.send(field_name.to_s))
             end
+            use_select2 = form_field.select2 || form_field.multiple || (GeneralForm.auto_select2 && !form_field.no_select2 && options.length > 10)
             klass = field_name.to_s
-            klass += ' select2' if form_field.select2 || form_field.multiple
+            klass += ' select2' if use_select2
             f.select field_name, options, {include_blank: prompt}, {class: klass, 'autocomplete': autocomplete, multiple: form_field.multiple, disabled: form_field.disabled}
           end
         when :collection_select
@@ -227,7 +229,7 @@ module GeneralFormHelper
       if GeneralForm.use_form_floating
         if floatable?(form_field, **options_)
           klass = "form-floating for-#{field_name}"
-          klass += ' for-select2' if form_field.select2 || form_field.multiple
+          klass += ' for-select2' if use_select2
           tag.div class: klass do
             concat field_plain
             if field_type == :text_area
