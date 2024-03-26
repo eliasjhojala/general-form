@@ -53,7 +53,7 @@ module GeneralFormHelper
       if form_fields.count != 1 || !form_fields.first.field_type.in?([:custom, :flags_check_boxes, :localised, :localised_text_area])
         tag.div class: ['input_container', form_fields.map(&:field_name).map{|field| "#{field}_container"}, form_fields.map(&:field_type).map{|field| "#{field}_container"}].flatten.uniq.join(' ') do
           form_fields.each do |field|
-            unless field.privileges.present? && !current_user.privileges?(field.privileges)
+            unless (field.privileges.present? && !current_user.privileges?(field.privileges)) || (field.privileges_strict.present? && !current_user.privileges_strict?(field.privileges_strict))
               concat beforeFormField(f, record, field, **options)
               concat formField(f, record, field, **options)
               afterFormField(f, record, field, **options)
@@ -67,7 +67,7 @@ module GeneralFormHelper
         nil
       elsif form_fields.first.field_type.in?([:localised, :localised_text_area])
         field = form_fields.first
-        unless field.privileges.present? && !current_user.privileges?(field.privileges)
+        unless (field.privileges.present? && !current_user.privileges?(field.privileges)) || (field.privileges_strict.present? && !current_user.privileges_strict?(field.privileges_strict))
           capture do
             I18n.available_locales.each do |locale|
               concat (tag.div class: "input_container #{form_fields[0].field_name}_container #{form_fields[0].field_type}_container" do
