@@ -1,5 +1,5 @@
 module Fields
-  
+
   def flat_fields(fields, **opts)
     fields = fields.values unless fields.class == Array
     return_with_names = !opts.key?(:name) || opts[:name]
@@ -26,7 +26,7 @@ module Fields
     end
     localised_fields(fields).each do |name, field|
       unless field.privileges.present? && !current_user.privileges?(field.privileges)
-        permitted_fields += I18n.available_locales.map { |locale| "#{field.field_name}_#{locale}" }
+        permitted_fields += (GeneralForm.locales || I18n.available_locales).map { |locale| "#{field.field_name}_#{locale}" }
       end
     end
     associated_fields(fields)&.each do |name, field|
@@ -59,7 +59,7 @@ module Fields
       v.field_type == :associated_fields
     end.group_by(&:first).map{|k,v| Hash[k, v.map(&:last)]}.inject(&:merge)
   end
-  
+
   def file_fields(fields)
     flat_fields(fields).select { |k,v| v.field_type == :file }
   end
@@ -67,7 +67,7 @@ module Fields
   def files_fields(fields)
     flat_fields(fields).select { |k,v| v.field_type == :files }
   end
-  
+
   def file_and_files_fields(fields)
     flat_fields(fields).select { |k,v| [:file, :files].include?(v.field_type) }
   end
@@ -75,7 +75,7 @@ module Fields
   def multiple_select_fields(fields)
     flat_fields(fields).select { |k,v| v.field_type == :select && v.multiple }
   end
-  
+
   def collection_select_fields(fields)
     flat_fields(fields).select { |k,v| v.field_type == :collection_select }
   end
@@ -83,19 +83,19 @@ module Fields
   def associated_field_names(fields)
     associated_fields(fields).keys
   end
-  
+
   def habtm_fields(fields)
     flat_fields(fields).select { |k,v| v.field_type == :habtm_select && v.multiple }
   end
-  
+
   def habtm_field_names(fields)
     habtm_fields(fields).keys
   end
-  
+
   def flags_select_fields(fields)
     flat_fields(fields).select { |k,v| v.field_type == :flags_select }
   end
-  
+
   def check_box_fields(fields)
     flat_fields(fields).select { |k,v| v.field_type == :check_box }
   end
@@ -107,7 +107,7 @@ module Fields
   def date_and_time_fields(fields)
     flat_fields(fields).select { |k,v| v.field_type == :date_and_time }
   end
-  
+
   def localised_fields(fields)
     flat_fields(fields).select { |k,v| v.field_type.in?([:localised, :localised_text_area]) }
   end

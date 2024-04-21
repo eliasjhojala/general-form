@@ -69,7 +69,7 @@ module GeneralFormHelper
         field = form_fields.first
         unless (field.privileges.present? && !current_user.privileges?(field.privileges)) || (field.privileges_strict.present? && !current_user.privileges_strict?(field.privileges_strict))
           capture do
-            I18n.available_locales.each do |locale|
+            (GeneralForm.locales || I18n.available_locales).each do |locale|
               concat (tag.div class: "input_container #{form_fields[0].field_name}_container #{form_fields[0].field_type}_container" do
                 field_localised = field.dup
                 field_localised.field_name = :"#{field.field_name}_#{locale}"
