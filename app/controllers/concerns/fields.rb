@@ -17,12 +17,12 @@ module Fields
     flat_fields(fields).keys
   end
 
-  def permit_fields(fields)
+  def permit_fields(fields, skip_disabled: false)
     permitted_fields = [:id]
     flat_fields(fields).each do |name, field|
-      unless field.privileges.present? && !current_user.privileges?(field.privileges)
-        permitted_fields << name
-      end
+      next if field.privileges.present? && !current_user.privileges?(field.privileges)
+      next if skip_disabled && field.field_type == :disabled || field.disabled
+      permitted_fields << name
     end
     localised_fields(fields).each do |name, field|
       unless field.privileges.present? && !current_user.privileges?(field.privileges)
