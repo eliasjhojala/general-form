@@ -144,10 +144,12 @@ module GeneralFormHelper
         when :datepicker, :date; f.date_field field_name, class: "#{field_name} datepicker", value: (f.object.send(field_name).strftime('%Y-%m-%d') rescue nil), data: { val: (f.object.send(field_name).strftime('%-d.%-m.%Y') rescue nil) }, placeholder: field_name_translated
         when :time; f.time_field field_name, class: "#{field_name} time", value: (f.object.send(field_name).strftime('%H:%M') rescue nil), data: { val: (f.object.send(field_name).strftime('%H:%M') rescue nil) }, placeholder: field_name_translated
         when :date_and_time; [:date, :time].sum { formField(f, record, GeneralForm::Field.new(field_name: "#{field_name}_#{_1}", type: _1)) }
+        when :datetime; f.datetime_local_field field_name, step: 1, class: "#{field_name} datetime", value: (f.object.send(field_name).strftime('%Y-%m-%dT%H:%M:%S') rescue nil), placeholder: field_name_translated
         when :phone_number; f.text_field field_name, class: "#{field_name} phone_number", placeholder: field_name_translated, 'autocomplete': autocomplete, value: Phone.readable(f.object.send(field_name))
         when :disabled; f.text_field field_name, class: "#{field_name} disabled"
         when :disabled_date; f.text_field field_name, class: "#{field_name} disabled", value: (f.object.send(field_name).strftime('%-d.%-m.%Y') rescue f.object.send(field_name))
         when :disabled_time; f.text_field field_name, class: "#{field_name} disabled", value: (f.object.send(field_name).strftime('%-d.%-m.%Y %H:%M') rescue f.object.send(field_name))
+        when :disabled_datetime; f.text_field field_name, class: "#{field_name} disabled", value: (f.object.send(field_name).strftime('%-d.%-m.%Y %H:%M:%S') rescue f.object.send(field_name))
         when :function; text_field_tag field_name, record.send(field_name), class: "#{field_name} disabled"
         when :hidden; f.hidden_field field_name, class: field_name
         when :reset; f.hidden_field field_name
