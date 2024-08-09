@@ -132,20 +132,31 @@ module GeneralFormHelper
     autocomplete = form_field.autocomplete || field_name
     if field_name.present?
       use_select2 = false
+      required = { required: form_field.required }
+      common = {
+        placeholder: field_name_translated,
+        **required
+      }
+      minmax = {}
+      minmax[:min] = form_field.min if form_field.min.present?
+      minmax[:max] = form_field.max if form_field.max.present?
+      minmax_textarea = {}
+      minmax_textarea[:minlength] = form_field.min if form_field.min.present?
+      minmax_textarea[:maxlength] = form_field.max if form_field.max.present?
       field_plain = capture do
         case field_type
-        when :default; f.text_field field_name, class: field_name, placeholder: field_name_translated, 'autocomplete': autocomplete
-        when :password; f.password_field field_name, class: field_name, placeholder: field_name_translated, 'autocomplete': form_field.autocomplete
-        when :title; f.text_field field_name, class: "#{field_name} title", placeholder: field_name_translated, 'autocomplete': autocomplete
-        when :subtitle; f.text_field field_name, class: "#{field_name} subtitle", placeholder: field_name_translated, 'autocomplete': autocomplete
+        when :default; f.text_field field_name, class: field_name, **common, 'autocomplete': autocomplete
+        when :password; f.password_field field_name, class: field_name, **common, 'autocomplete': form_field.autocomplete
+        when :title; f.text_field field_name, class: "#{field_name} title", **common, 'autocomplete': autocomplete
+        when :subtitle; f.text_field field_name, class: "#{field_name} subtitle", **common, 'autocomplete': autocomplete
         when :check_box; f.check_box(field_name, class: field_name, include_hidden: options[:is_part_of_alterable_has_many_association].blank?) + f.label(field_name, "<span>check_box_outline_blank</span><span>check_box</span>".html_safe, class: "material-icons #{field_name}")
-        when :text_area; f.text_area field_name, class: field_name, placeholder: field_name_translated
-        when :trix_editor; tag.div(f.trix_editor(field_name, class: field_name, placeholder: field_name_translated), class: 'trix-container')
-        when :datepicker, :date; f.date_field field_name, class: "#{field_name} datepicker", value: (f.object.send(field_name).strftime('%Y-%m-%d') rescue nil), data: { val: (f.object.send(field_name).strftime('%-d.%-m.%Y') rescue nil) }, placeholder: field_name_translated
-        when :time; f.time_field field_name, class: "#{field_name} time", value: (f.object.send(field_name).strftime('%H:%M') rescue nil), data: { val: (f.object.send(field_name).strftime('%H:%M') rescue nil) }, placeholder: field_name_translated
-        when :date_and_time; [:date, :time].sum { formField(f, record, GeneralForm::Field.new(field_name: "#{field_name}_#{_1}", type: _1)) }
-        when :datetime; f.datetime_local_field field_name, step: 1, class: "#{field_name} datetime", value: (f.object.send(field_name).strftime('%Y-%m-%dT%H:%M:%S') rescue nil), placeholder: field_name_translated
-        when :phone_number; f.text_field field_name, class: "#{field_name} phone_number", placeholder: field_name_translated, 'autocomplete': autocomplete, value: Phone.readable(f.object.send(field_name))
+        when :text_area; f.text_area field_name, class: field_name, **common, **minmax_textarea
+        when :trix_editor; tag.div(f.trix_editor(field_name, class: field_name, **common), class: 'trix-container')
+        when :datepicker, :date; f.date_field field_name, class: "#{field_name} datepicker", value: (f.object.send(field_name).strftime('%Y-%m-%d') rescue nil), data: { val: (f.object.send(field_name).strftime('%-d.%-m.%Y') rescue nil) }, **common, **minmax
+        when :time; f.time_field field_name, class: "#{field_name} time", value: (f.object.send(field_name).strftime('%H:%M') rescue nil), data: { val: (f.object.send(field_name).strftime('%H:%M') rescue nil) }, **common
+        when :date_and_time; [:date, :time].sum { formField(f, record, GeneralForm::Field.new(field_name: "#{field_name}_#{_1}", type: _1, **common, **minmax)) }
+        when :datetime; f.datetime_local_field field_name, step: 1, class: "#{field_name} datetime", value: (f.object.send(field_name).strftime('%Y-%m-%dT%H:%M:%S') rescue nil), **common, **minmax
+        when :phone_number; f.text_field field_name, class: "#{field_name} phone_number", **common, 'autocomplete': autocomplete, value: Phone.readable(f.object.send(field_name))
         when :disabled; f.text_field field_name, class: "#{field_name} disabled"
         when :disabled_date; f.text_field field_name, class: "#{field_name} disabled", value: (f.object.send(field_name).strftime('%-d.%-m.%Y') rescue f.object.send(field_name))
         when :disabled_time; f.text_field field_name, class: "#{field_name} disabled", value: (f.object.send(field_name).strftime('%-d.%-m.%Y %H:%M') rescue f.object.send(field_name))
@@ -158,7 +169,7 @@ module GeneralFormHelper
         when :only_value_as_date; tag.span((l f.object.send(field_name) rescue nil), class: 'only_value_span')
         when :title_only_value; tag.span f.object.send(field_name).to_s, class: 'only_value_span title'
         when :label; f.label field_name, "<span>check_box_outline_blank</span><span>check_box</span>".html_safe, class: 'material-icons'
-        when :number; f.text_field field_name, class: field_name, placeholder: field_name_translated, 'autocomplete': autocomplete, type: 'number', step: 1.0 / (10**(form_field.scale || 0))
+        when :number; f.text_field field_name, class: field_name, **common, **minmax, 'autocomplete': autocomplete, type: 'number', step: 1.0 / (10**(form_field.scale || 0))
         when :range; f.range_field field_name, class: field_name, min: form_field.min, max: form_field.max, step: form_field.step
         when :file; single_file_field(f, record, attachment_name: field_name, replace_instead_of_delete: true, preview: form_field.preview, direct_upload: form_field.direct_upload)
         when :files; default_file_field(f, record, files_name: field_name, direct_upload: form_field.direct_upload)
@@ -170,7 +181,7 @@ module GeneralFormHelper
           unless form_field.select_options.present?
             options = enum_options_for_select(record, field_name)
             if options.present?
-              f.select field_name, options, {include_blank: prompt}, {class: field_name, 'autocomplete': autocomplete, multiple: form_field.multiple, disabled: form_field.disabled }
+              f.select field_name, options, {include_blank: prompt}, {class: field_name, 'autocomplete': autocomplete, multiple: form_field.multiple, disabled: form_field.disabled, **required }
             end
           else
             form_field.options_name ||= "name"
@@ -201,14 +212,14 @@ module GeneralFormHelper
             use_select2 = form_field.select2 || form_field.multiple || (GeneralForm.auto_select2 && !form_field.no_select2 && options.length > 10)
             klass = field_name.to_s
             klass += ' select2' if use_select2
-            f.select field_name, options, {include_blank: prompt}, {class: klass, 'autocomplete': autocomplete, multiple: form_field.multiple, disabled: form_field.disabled}
+            f.select field_name, options, {include_blank: prompt}, {class: klass, 'autocomplete': autocomplete, multiple: form_field.multiple, disabled: form_field.disabled, **required}
           end
         when :collection_select
           form_field.options_name ||= "name"
           options = form_field.select_options[]
-          f.collection_select field_name, options, 'id', form_field.options_name, {}, { multiple: true, class: 'select2' }
+          f.collection_select field_name, options, 'id', form_field.options_name, {}, { multiple: true, class: 'select2', **required }
         when :flags_select
-          f.collection_select field_name, translated_flag_pairs(record.class, field_name), 'last', 'first', {}, { class: "select2", multiple: true }
+          f.collection_select field_name, translated_flag_pairs(record.class, field_name), 'last', 'first', {}, { class: "select2", multiple: true, **required }
         when :habtm_select
           value = record.send(form_field.habtm).pluck(:id)
           if form_field.select_options.respond_to? :call
@@ -218,7 +229,7 @@ module GeneralFormHelper
           end
           options = policy_scope(options) if form_field.no_policy_scope.blank?
           form_field.options_name ||= "name"
-          f.select field_name, options_from_collection_for_select(options, "id", form_field.options_name, value), {:include_blank => "-"}, {class: field_name, 'autocomplete': autocomplete, multiple: form_field.multiple, disabled: form_field.disabled }
+          f.select field_name, options_from_collection_for_select(options, "id", form_field.options_name, value), {:include_blank => "-"}, {class: field_name, 'autocomplete': autocomplete, multiple: form_field.multiple, disabled: form_field.disabled, **required }
         when :flags_check_boxes
           f.collection_check_boxes(field_name, translated_flag_pairs(record.class, field_name), :last, :first) do |b|
             concat (tag.div class: ['input_container', "#{field_name}_container", "#{field_type}_container"].flatten.uniq.join(' ') do
