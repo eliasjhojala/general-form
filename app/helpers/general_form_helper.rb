@@ -205,11 +205,13 @@ module GeneralFormHelper
                 options = policy_scope(options)
               end
             end
+            options_length = 0
             unless options.is_a? ActiveSupport::SafeBuffer
+              options_length = options.length
               options_value = form_field.options_value || (!form_field.polymorphic ? 'id' : 'global_id')
               options = options_from_collection_for_select(options, options_value, form_field.options_name, record.send(field_name.to_s))
             end
-            use_select2 = form_field.select2 || form_field.multiple || (GeneralForm.auto_select2 && !form_field.no_select2 && options.length > 10)
+            use_select2 = form_field.select2 || form_field.multiple || (GeneralForm.auto_select2 && !form_field.no_select2 && options_length > 10)
             klass = field_name.to_s
             klass += ' select2' if use_select2
             f.select field_name, options, {include_blank: prompt}, {class: klass, 'autocomplete': autocomplete, multiple: form_field.multiple, disabled: form_field.disabled, **required}
