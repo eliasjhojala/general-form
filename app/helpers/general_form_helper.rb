@@ -340,7 +340,7 @@ module GeneralFormHelper
 
   def floatable? field, **options
     type = field.field_type || :default
-    (type.in?([:default, :password, :title, :subtitle, :text_area, :datepicker, :date, :time, :phone_number, :disabled, :disabled_date, :disabled_time, :function, :number, :file, :files, :localised, :localised_text_area]) ||
+    (type.in?([:default, :password, :title, :subtitle, :text_area, :datepicker, :date, :time, :datetime, :phone_number, :disabled, :disabled_date, :disabled_time, :function, :number, :file, :files, :localised, :localised_text_area]) ||
     type == :select) && !options[:is_part_of_alterable_has_many_association]
   end
 
