@@ -173,6 +173,7 @@ module GeneralFormHelper
         when :range; f.range_field field_name, class: field_name, min: form_field.min, max: form_field.max, step: form_field.step
         when :file; single_file_field(f, record, attachment_name: field_name, replace_instead_of_delete: true, preview: form_field.preview, direct_upload: form_field.direct_upload)
         when :files; default_file_field(f, record, files_name: field_name, direct_upload: form_field.direct_upload)
+        when :color; f.color_field field_name, class: field_name, **common
         when :select
           prompt = form_field.prompt_translated
           prompt ||= form_field.prompt.present? ? t("activerecord.prompts.#{record.class.name.underscore}.#{field_name}") : '-'
