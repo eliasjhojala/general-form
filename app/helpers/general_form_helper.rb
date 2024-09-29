@@ -180,7 +180,7 @@ module GeneralFormHelper
           x = form_field.no_policy_scope
           use_policy_scope = x.blank? || (x.respond_to?(:call) && x[].blank?)
           unless form_field.select_options.present?
-            options = enum_options_for_select(record, field_name)
+            options = enum_options_for_select(record, field_name, form_field.allowed_keys&.call)
             if options.present?
               f.select field_name, options, {include_blank: prompt}, {class: field_name, 'autocomplete': autocomplete, multiple: form_field.multiple, disabled: form_field.disabled, **required }
             end
@@ -324,7 +324,7 @@ module GeneralFormHelper
     end
   end
 
-  def enum_options_for_select object, enum
+  def enum_options_for_select object, enum, allowed_keys = nil
     if object.present?
       model_name = (if object.is_a?(ApplicationRecord)
         record = object
@@ -333,6 +333,7 @@ module GeneralFormHelper
         object
       end)&.name&.underscore
       enums = t("activerecord.enums.#{model_name}.#{enum}", default: [:"activerecord.enums.#{enum}"])
+      enums = enums.slice(*allowed_keys) unless allowed_keys.nil?
       if enums.present? && enums.is_a?(Hash)
         options_for_select enums.invert, record&.send(enum)
       end
