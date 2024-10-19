@@ -41,28 +41,53 @@ module GeneralFormHelper
     return
   end
 
+  def fields_for_assoc_if_needed(f, record, field, path, **options)
+    if path.nil? || path.empty?
+      yield f
+      return
+    end
+
+    if path.is_a?(Array)
+      assoc = path[0]
+      remaining_path = path[1..]
+      f.fields_for assoc do |ff|
+        fields_for_assoc_if_needed(ff, record.send(assoc), field, remaining_path, **options) do |f_assoc|
+          yield f_assoc
+        end
+      end
+    else
+      yield f
+    end
+  end
+
   def formFields(f, record, form_fields, **options)
     form_fields = standardize_form_fields form_fields
     if form_fields.count() == 1 && form_fields[0].field_type == :associated_fields
-      f.fields_for form_fields[0].field_name do |ff|
-        associated_fields = form_fields[0].associated_fields
-        associated_fields ||= GeneralForm.default_fields[form_fields[0].associated_model]
-        allFormFields(ff, record.send(form_fields[0].field_name), associated_fields, **options)
+      fields_for_assoc_if_needed f, record, form_fields[0], form_fields[0].association_path do |ff|
+        concat (ff.fields_for form_fields[0].field_name do |ff_2|
+          associated_fields = form_fields[0].associated_fields
+          associated_fields ||= GeneralForm.default_fields[form_fields[0].associated_model]
+          allFormFields(ff_2, ff_2.object, associated_fields, **options)
+        end)
       end
     else
       if form_fields.count != 1 || !form_fields.first.field_type.in?([:custom, :flags_check_boxes, :localised, :localised_text_area])
         tag.div class: ['input_container', form_fields.map(&:field_name).map{|field| "#{field}_container"}, form_fields.map(&:field_type).map{|field| "#{field}_container"}].flatten.uniq.join(' ') do
           form_fields.each do |field|
             unless (field.privileges.present? && !current_user.privileges?(field.privileges)) || (field.privileges_strict.present? && !current_user.privileges_strict?(field.privileges_strict))
-              concat beforeFormField(f, record, field, **options)
-              concat formField(f, record, field, **options)
-              afterFormField(f, record, field, **options)
+              concat (fields_for_assoc_if_needed f, record, field, field.association_path do |ff|
+                concat beforeFormField(ff, ff.object, field, **options)
+                concat formField(ff, ff.object, field, **options)
+                afterFormField(ff, ff.object, field, **options)
+              end)
             end
           end
         end
       elsif form_fields.first.field_type == :flags_check_boxes
         form_fields.each do |field|
-          concat formField(f, record, field, **options)
+          concat (fields_for_assoc_if_needed f, record, field, field.association_path do |ff|
+            concat formField(ff, ff.object, field, **options)
+          end)
         end
         nil
       elsif form_fields.first.field_type.in?([:localised, :localised_text_area])
@@ -75,9 +100,11 @@ module GeneralFormHelper
                 field_localised.field_name = :"#{field.field_name}_#{locale}"
                 field_localised.field_type = {localised: :default, localised_text_area: :text_area}[field.field_type]
                 options_with_postfix = options.merge(postfix: " (#{locale})")
-                concat beforeFormField(f, record, field, **options_with_postfix)
-                concat formField(f, record, field_localised, **options.merge(name_for_i18n: field.field_name, label_content: label_content(f, record, field, **options_with_postfix)))
-                concat afterFormField(f, record, field, **options_with_postfix)
+                concat (fields_for_assoc_if_needed f, record, field, field.association_path do |ff|
+                  concat beforeFormField(ff, ff.object, field, **options_with_postfix)
+                  concat formField(ff, ff.object, field_localised, **options.merge(name_for_i18n: field.field_name, label_content: label_content(ff, f.object.record, field, **options_with_postfix)))
+                  concat afterFormField(ff, ff.object, field, **options_with_postfix)
+                end)
               end)
             end
           end

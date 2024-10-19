@@ -22,7 +22,21 @@ module Fields
     flat_fields(fields).each do |name, field|
       next if field.privileges.present? && !current_user.privileges?(field.privileges)
       next if skip_disabled && field.field_type == :disabled || field.disabled
-      permitted_fields << name
+      next if field.field_type == :associated_fields
+      if field.association_path.present?
+        cur = field.association_path.dup
+        if cur.length > 0
+          dup = field.dup
+          dup.association_path = nil
+          x = permit_fields([dup])
+        end
+        while cur.length > 0
+          x = { "#{cur.shift}_attributes" => x }
+        end
+        permitted_fields << x
+      else
+        permitted_fields << name
+      end
     end
     localised_fields(fields).each do |name, field|
       unless field.privileges.present? && !current_user.privileges?(field.privileges)
