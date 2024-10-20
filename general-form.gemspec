@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = %q{general-form}
-  s.version = '0.0.101'
+  s.version = '0.0.102'
   s.date = %q{2020-07-22}
   s.summary = %q{general system for rendering forms and handling data in controllers}
   s.files = [
@@ -11,7 +11,8 @@ Gem::Specification.new do |s|
     'activerecord-import',
     'active_flag',
     'select2-rails',
-    'jquery-ui-rails'
+    'jquery-ui-rails',
+    'deep_merge'
   ].each { |dep_name| s.add_runtime_dependency(dep_name) }
   s.authors = 'elias'
 end
