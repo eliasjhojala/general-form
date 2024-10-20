@@ -18,11 +18,11 @@ module Fields
   end
 
   def permit_fields(fields, skip_disabled: false)
+    permitted_hash_fields = {}
     permitted_fields = [:id]
     flat_fields(fields).each do |name, field|
       next if field.privileges.present? && !current_user.privileges?(field.privileges)
       next if skip_disabled && field.field_type == :disabled || field.disabled
-      next if field.field_type == :associated_fields
       if field.association_path.present?
         cur = field.association_path.dup
         if cur.length > 0
@@ -33,22 +33,25 @@ module Fields
         while cur.length > 0
           x = { "#{cur.shift}_attributes" => x }
         end
-        permitted_fields << x
+        permitted_hash_fields.deeper_merge! x
       else
         permitted_fields << name
       end
     end
     localised_fields(fields).each do |name, field|
+      next if field.association_path.present?
       unless field.privileges.present? && !current_user.privileges?(field.privileges)
         permitted_fields += (GeneralForm.locales || I18n.available_locales).map { |locale| "#{field.field_name}_#{locale}" }
       end
     end
     associated_fields(fields)&.each do |name, field|
       field = [field] unless field.class == Array
-      field.each { |f| f.associated_fields ||= GeneralForm.default_fields[f.associated_model] }
-      permitted_fields.push("#{name}_attributes" => permit_fields(field.map(&:associated_fields)))
+      filtered = field.reject { _1.association_path.present? }
+      filtered.each { |f| f.associated_fields ||= GeneralForm.default_fields[f.associated_model] }
+      permitted_hash_fields.deeper_merge! "#{name}_attributes" => permit_fields(filtered.map(&:associated_fields))
     end
     date_and_time_fields(fields)&.each do |name, field|
+      next if field.association_path.present?
       permitted_fields += [:date, :time].map { "#{name}_#{_1}" }
     end
     special_fields = [
@@ -60,12 +63,16 @@ module Fields
     ]
     special_fields.each do |fields|
       fields&.each do |name, field|
+        next if field.association_path.present?
         unless field.privileges.present? && !current_user.privileges?(field.privileges)
-          permitted_fields.push(name => [])
+          permitted_hash_fields.deeper_merge! name => []
         end
       end
     end
-    return permitted_fields
+    if permitted_hash_fields.present?
+      permitted_fields << permitted_hash_fields
+    end
+    return permitted_fields.uniq
   end
 
   def associated_fields(fields)

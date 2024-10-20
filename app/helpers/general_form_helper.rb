@@ -102,7 +102,7 @@ module GeneralFormHelper
                 options_with_postfix = options.merge(postfix: " (#{locale})")
                 concat (fields_for_assoc_if_needed f, record, field, field.association_path do |ff|
                   concat beforeFormField(ff, ff.object, field, **options_with_postfix)
-                  concat formField(ff, ff.object, field_localised, **options.merge(name_for_i18n: field.field_name, label_content: label_content(ff, f.object.record, field, **options_with_postfix)))
+                  concat formField(ff, ff.object, field_localised, **options.merge(name_for_i18n: field.field_name, label_content: label_content(ff, f.object, field, **options_with_postfix)))
                   concat afterFormField(ff, ff.object, field, **options_with_postfix)
                 end)
               end)

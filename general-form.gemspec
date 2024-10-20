@@ -11,7 +11,8 @@ Gem::Specification.new do |s|
     'activerecord-import',
     'active_flag',
     'select2-rails',
-    'jquery-ui-rails'
+    'jquery-ui-rails',
+    'deep_merge'
   ].each { |dep_name| s.add_runtime_dependency(dep_name) }
   s.authors = 'elias'
 end
