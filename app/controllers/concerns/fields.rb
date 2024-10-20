@@ -133,4 +133,22 @@ module Fields
     flat_fields(fields).select { |k,v| v.field_type.in?([:localised, :localised_text_area]) }
   end
 
+  # Works currently only with fields that have association_path
+  # Not with associated_fields
+  def fields_for_association_experimental fields, association_path
+    return [] unless association_path.present? && association_path.is_a?(Array)
+    association_path = association_path.dup
+    cur = association_path.shift
+    result = flat_fields(fields, hash: false).select { |k,v| v.association_path.first == cur }.map(&:last).flatten.map(&:dup)
+    result.each do
+      _1.association_path = _1.association_path.dup
+      _1.association_path.shift
+    end
+    if association_path.length > 0
+      fields_for_association_experimental(result, association_path)
+    else
+      result
+    end
+  end
+
 end
