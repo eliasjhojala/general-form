@@ -76,8 +76,10 @@ module GeneralFormHelper
           form_fields.each do |field|
             unless (field.privileges.present? && !current_user.privileges?(field.privileges)) || (field.privileges_strict.present? && !current_user.privileges_strict?(field.privileges_strict))
               concat (fields_for_assoc_if_needed f, record, field, field.association_path do |ff|
+                field_html = formField(ff, ff.object, field, **options)
+                next if field_html.nil?
                 concat beforeFormField(ff, ff.object, field, **options)
-                concat formField(ff, ff.object, field, **options)
+                concat field_html
                 afterFormField(ff, ff.object, field, **options)
               end)
             end
@@ -86,7 +88,9 @@ module GeneralFormHelper
       elsif form_fields.first.field_type == :flags_check_boxes
         form_fields.each do |field|
           concat (fields_for_assoc_if_needed f, record, field, field.association_path do |ff|
-            concat formField(ff, ff.object, field, **options)
+            field_html = formField(ff, ff.object, field, **options)
+            next if field_html.nil?
+            concat field_html
           end)
         end
         nil
@@ -271,6 +275,8 @@ module GeneralFormHelper
           end
         end
       end
+
+      return nil if field_plain.blank?
 
       if GeneralForm.use_form_floating
         if floatable?(form_field, **options_)
