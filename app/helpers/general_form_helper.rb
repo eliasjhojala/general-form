@@ -72,7 +72,7 @@ module GeneralFormHelper
       end
     else
       if form_fields.count != 1 || !form_fields.first.field_type.in?([:custom, :flags_check_boxes, :localised, :localised_text_area])
-        tag.div class: ['input_container', form_fields.map(&:field_name).map{|field| "#{field}_container"}, form_fields.map(&:field_type).map{|field| "#{field}_container"}].flatten.uniq.join(' ') do
+        container_contents = capture do
           form_fields.each do |field|
             unless (field.privileges.present? && !current_user.privileges?(field.privileges)) || (field.privileges_strict.present? && !current_user.privileges_strict?(field.privileges_strict))
               concat (fields_for_assoc_if_needed f, record, field, field.association_path do |ff|
@@ -83,6 +83,11 @@ module GeneralFormHelper
                 afterFormField(ff, ff.object, field, **options)
               end)
             end
+          end
+        end
+        if container_contents.present?
+          tag.div class: ['input_container', form_fields.map(&:field_name).map{|field| "#{field}_container"}, form_fields.map(&:field_type).map{|field| "#{field}_container"}].flatten.uniq.join(' ') do
+            container_contents
           end
         end
       elsif form_fields.first.field_type == :flags_check_boxes
