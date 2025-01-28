@@ -170,10 +170,12 @@ module GeneralFormHelper
       use_select2 = false
       required = { required: form_field.required }
       readonly = { readonly: form_field.readonly }
+      autofocus = { autofocus: form_field.autofocus }
       common = {
         placeholder: field_name_translated,
-        **required, **readonly
+        **required, **readonly, **autofocus
       }
+      select_common = { **required, **readonly, **autofocus }
       minmax = {}
       minmax[:min] = form_field.min if form_field.min.present?
       minmax[:max] = form_field.max if form_field.max.present?
@@ -219,7 +221,7 @@ module GeneralFormHelper
           unless form_field.select_options.present?
             options = enum_options_for_select(record, field_name, form_field.allowed_keys&.call)
             if options.present?
-              f.select field_name, options, {include_blank: prompt}, {class: field_name, 'autocomplete': autocomplete, multiple: form_field.multiple, disabled: form_field.disabled, **required, **readonly }
+              f.select field_name, options, {include_blank: prompt}, {class: field_name, 'autocomplete': autocomplete, multiple: form_field.multiple, disabled: form_field.disabled, **select_common }
             end
           else
             form_field.options_name ||= "name"
@@ -253,15 +255,15 @@ module GeneralFormHelper
               use_select2 = form_field.select2 || form_field.multiple || (GeneralForm.auto_select2 && !form_field.no_select2 && options_length > 10)
               klass = field_name.to_s
               klass += ' select2' if use_select2
-              f.select field_name, options, {include_blank: prompt}, {class: klass, 'autocomplete': autocomplete, multiple: form_field.multiple, disabled: form_field.disabled, **required, **readonly}
+              f.select field_name, options, {include_blank: prompt}, {class: klass, 'autocomplete': autocomplete, multiple: form_field.multiple, disabled: form_field.disabled, **select_common }
             end
           end
         when :collection_select
           form_field.options_name ||= "name"
           options = form_field.select_options[]
-          f.collection_select field_name, options, 'id', form_field.options_name, {}, { multiple: true, class: 'select2', **required, **readonly }
+          f.collection_select field_name, options, 'id', form_field.options_name, {}, { multiple: true, class: 'select2', **select_common }
         when :flags_select
-          f.collection_select field_name, translated_flag_pairs(record.class, field_name), 'last', 'first', {}, { class: "select2", multiple: true, **required, **readonly }
+          f.collection_select field_name, translated_flag_pairs(record.class, field_name), 'last', 'first', {}, { class: "select2", multiple: true, **select_common }
         when :habtm_select
           value = record.send(form_field.habtm).pluck(:id)
           if form_field.select_options.respond_to? :call
@@ -271,7 +273,7 @@ module GeneralFormHelper
           end
           options = policy_scope(options) if form_field.no_policy_scope.blank?
           form_field.options_name ||= "name"
-          f.select field_name, options_from_collection_for_select(options, "id", form_field.options_name, value), {:include_blank => "-"}, {class: field_name, 'autocomplete': autocomplete, multiple: form_field.multiple, disabled: form_field.disabled, **required, **readonly }
+          f.select field_name, options_from_collection_for_select(options, "id", form_field.options_name, value), {:include_blank => "-"}, {class: field_name, 'autocomplete': autocomplete, multiple: form_field.multiple, disabled: form_field.disabled, **select_common }
         when :flags_check_boxes
           f.collection_check_boxes(field_name, translated_flag_pairs(record.class, field_name), :last, :first) do |b|
             concat (tag.div class: ['input_container', "#{field_name}_container", "#{field_type}_container"].flatten.uniq.join(' ') do
