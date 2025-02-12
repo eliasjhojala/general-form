@@ -131,7 +131,11 @@ module GeneralFormHelper
   def localised_field_name(record, field)
     if field.localised_text.blank?
       text = field.text.present? ? field.text : field.field_name
-      record.class.human_attribute_name(text)
+      if field.text.blank? || text.is_a?(Symbol) || (text.is_a?(String) && text.exclude?('.'))
+        record.class.human_attribute_name(text)
+      else
+        t(text)
+      end
     else
       field.localised_text
     end
