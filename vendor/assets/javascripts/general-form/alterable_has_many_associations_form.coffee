@@ -23,6 +23,7 @@ onLoad = ->
     loadSearchFieldsJs() if typeof(loadSearchFieldsJs) == 'function'
     callback = form.data('add-item-callback')
     window[callback]() if callback
+    form.trigger 'itemAdded'
 
   delete_item = (e, tr) ->
     e.preventDefault()
@@ -31,12 +32,12 @@ onLoad = ->
     if $('tr:not(.hidden)').length <= 1
       add_item e, tr.parents('form')
 
-  $('.alterable_has_many_associations_form:not(.disable_key_binds)').unbind().bind 'keypress', (e) ->
+  $('.alterable_has_many_associations_form:not(.disable_key_binds)').off('keypress').on 'keypress', (e) ->
     if e.keyCode == 13
       add_item(e, $(this))
       return false
 
-  $('.alterable_has_many_associations_form.directly_downward_with_enter').find('input').unbind('keypress', focus_next_field).bind 'keypress', (e) ->
+  $('.alterable_has_many_associations_form.directly_downward_with_enter').find('input').off('keypress', focus_next_field).on 'keypress', (e) ->
     focus_next_field(e, this)
 
   focus_next_field = (e, elem) ->

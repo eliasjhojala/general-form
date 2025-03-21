@@ -149,7 +149,7 @@ module GeneralFormHelper
   end
 
   def beforeFormField(f, record, field, **options)
-    unless field.hide_name || field.name_after || (GeneralForm.use_form_floating && floatable?(field, **options))
+    unless field.hide_name || field.name_after || ((GeneralForm.use_form_floating || options[:use_form_floating]) && floatable?(field, **options))
       textSpan(f, record, field, **options)
     end
   end
@@ -175,9 +175,10 @@ module GeneralFormHelper
       required = { required: form_field.required }
       readonly = { readonly: form_field.readonly }
       autofocus = { autofocus: form_field.autofocus }
+      disabled = { disabled: form_field.disabled }
       common = {
         placeholder: field_name_translated,
-        **required, **readonly, **autofocus
+        **required, **readonly, **autofocus, **disabled
       }
       select_common = { **required, **readonly, **autofocus }
       minmax = {}
@@ -289,7 +290,7 @@ module GeneralFormHelper
 
       return nil if field_plain.blank?
 
-      if GeneralForm.use_form_floating
+      if GeneralForm.use_form_floating || options_[:use_form_floating]
         if floatable?(form_field, **options_)
           klass = "form-floating for-#{field_name}"
           klass += ' for-select2' if use_select2
