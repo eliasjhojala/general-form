@@ -29,6 +29,7 @@ onLoad = ->
     e.preventDefault()
     tr.find('input:not([type=hidden]), select:not([type=hidden])').val('')
     tr.addClass 'hidden'
+    tr.find('*').prop 'required', false
     if $('tr:not(.hidden)').length <= 1
       add_item e, tr.parents('form')
 
