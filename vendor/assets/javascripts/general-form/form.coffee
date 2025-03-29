@@ -63,7 +63,7 @@ onLoad = ->
     checkbox_uid_length = Math.ceil(checkbox_amount / 5)
     $('.input_container.check_box_container').each ->
       checkbox = $(this).find('input[type="checkbox"]')
-      label = $(this).find('label')
+      label = $(this).find("label[for=\"#{checkbox.attr('id')}\"]")
       uid = uniqueId(checkbox_uid_length)
       $(label).attr('for', "#{$(label).attr('for')}_checkbox_#{uid}")
       $(checkbox).attr('id', "#{$(checkbox).attr('id')}_checkbox_#{uid}")
