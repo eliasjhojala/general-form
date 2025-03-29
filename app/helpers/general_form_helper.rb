@@ -149,7 +149,7 @@ module GeneralFormHelper
   end
 
   def beforeFormField(f, record, field, **options)
-    unless field.hide_name || field.name_after || (GeneralForm.use_form_floating && floatable?(field, **options))
+    unless field.hide_name || field.name_after || ((GeneralForm.use_form_floating || options[:use_form_floating]) && floatable?(field, **options))
       textSpan(f, record, field, **options)
     end
   end
@@ -289,7 +289,7 @@ module GeneralFormHelper
 
       return nil if field_plain.blank?
 
-      if GeneralForm.use_form_floating
+      if GeneralForm.use_form_floating || options_[:use_form_floating]
         if floatable?(form_field, **options_)
           klass = "form-floating for-#{field_name}"
           klass += ' for-select2' if use_select2
