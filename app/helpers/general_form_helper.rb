@@ -176,11 +176,12 @@ module GeneralFormHelper
       readonly = { readonly: form_field.readonly }
       autofocus = { autofocus: form_field.autofocus }
       disabled = { disabled: form_field.disabled }
+      html = form_field.html || {}
       common = {
         placeholder: field_name_translated,
-        **required, **readonly, **autofocus, **disabled
+        **required, **readonly, **autofocus, **disabled, **html
       }
-      select_common = { **required, **readonly, **autofocus }
+      select_common = { **required, **readonly, **autofocus, **html }
       minmax = {}
       minmax[:min] = form_field.min if form_field.min.present?
       minmax[:max] = form_field.max if form_field.max.present?
@@ -193,7 +194,7 @@ module GeneralFormHelper
         when :password; f.password_field field_name, class: field_name, **common, 'autocomplete': form_field.autocomplete
         when :title; f.text_field field_name, class: "#{field_name} title", **common, 'autocomplete': autocomplete
         when :subtitle; f.text_field field_name, class: "#{field_name} subtitle", **common, 'autocomplete': autocomplete
-        when :check_box; f.check_box(field_name, class: field_name, include_hidden: options[:is_part_of_alterable_has_many_association].blank?) + f.label(field_name, "<span>check_box_outline_blank</span><span>check_box</span>".html_safe, class: "material-icons #{field_name}")
+        when :check_box; f.check_box(field_name, class: field_name, include_hidden: options[:is_part_of_alterable_has_many_association].blank?, **html) + f.label(field_name, "<span>check_box_outline_blank</span><span>check_box</span>".html_safe, class: "material-icons #{field_name}")
         when :text_area; f.text_area field_name, class: field_name, **common, **minmax_textarea
         when :trix_editor; tag.div(f.trix_editor(field_name, class: field_name, **common), class: 'trix-container')
         when :datepicker, :date; f.date_field field_name, class: "#{field_name} datepicker", value: (f.object.send(field_name).strftime('%Y-%m-%d') rescue nil), data: { val: (f.object.send(field_name).strftime('%-d.%-m.%Y') rescue nil) }, **common, **minmax
@@ -201,20 +202,20 @@ module GeneralFormHelper
         when :date_and_time; [:date, :time].sum { formField(f, record, GeneralForm::Field.new(field_name: "#{field_name}_#{_1}", type: _1, **common, **minmax)) }
         when :datetime; f.datetime_local_field field_name, step: 1, class: "#{field_name} datetime", value: (f.object.send(field_name).strftime('%Y-%m-%dT%H:%M:%S') rescue nil), **common, **minmax
         when :phone_number; f.text_field field_name, class: "#{field_name} phone_number", **common, 'autocomplete': autocomplete, value: Phone.readable(f.object.send(field_name))
-        when :disabled; f.text_field field_name, class: "#{field_name} disabled"
-        when :disabled_date; f.text_field field_name, class: "#{field_name} disabled", value: (f.object.send(field_name).strftime('%-d.%-m.%Y') rescue f.object.send(field_name))
-        when :disabled_time; f.text_field field_name, class: "#{field_name} disabled", value: (f.object.send(field_name).strftime('%-d.%-m.%Y %H:%M') rescue f.object.send(field_name))
-        when :disabled_datetime; f.text_field field_name, class: "#{field_name} disabled", value: (f.object.send(field_name).strftime('%-d.%-m.%Y %H:%M:%S') rescue f.object.send(field_name))
-        when :function; text_field_tag field_name, record.send(field_name), class: "#{field_name} disabled"
-        when :hidden; f.hidden_field field_name, class: field_name
-        when :reset; f.hidden_field field_name
+        when :disabled; f.text_field field_name, class: "#{field_name} disabled", **html
+        when :disabled_date; f.text_field field_name, class: "#{field_name} disabled", value: (f.object.send(field_name).strftime('%-d.%-m.%Y') rescue f.object.send(field_name)), **html
+        when :disabled_time; f.text_field field_name, class: "#{field_name} disabled", value: (f.object.send(field_name).strftime('%-d.%-m.%Y %H:%M') rescue f.object.send(field_name)), **html
+        when :disabled_datetime; f.text_field field_name, class: "#{field_name} disabled", value: (f.object.send(field_name).strftime('%-d.%-m.%Y %H:%M:%S') rescue f.object.send(field_name)), **html
+        when :function; text_field_tag field_name, record.send(field_name), class: "#{field_name} disabled", **html
+        when :hidden; f.hidden_field field_name, class: field_name, **html
+        when :reset; f.hidden_field field_name, **html
         when :only_text; ""
         when :only_value; tag.span f.object.send(field_name).to_s, class: 'only_value_span'
         when :only_value_as_date; tag.span((l f.object.send(field_name) rescue nil), class: 'only_value_span')
         when :title_only_value; tag.span f.object.send(field_name).to_s, class: 'only_value_span title'
-        when :label; f.label field_name, "<span>check_box_outline_blank</span><span>check_box</span>".html_safe, class: 'material-icons'
+        when :label; f.label field_name, "<span>check_box_outline_blank</span><span>check_box</span>".html_safe, class: 'material-icons', **html
         when :number; f.text_field field_name, class: field_name, **common, **minmax, 'autocomplete': autocomplete, type: 'number', step: 1.0 / (10**(form_field.scale || 0))
-        when :range; f.range_field field_name, class: field_name, min: form_field.min, max: form_field.max, step: form_field.step
+        when :range; f.range_field field_name, class: field_name, min: form_field.min, max: form_field.max, step: form_field.step, **html
         when :file; single_file_field(f, record, attachment_name: field_name, replace_instead_of_delete: true, preview: form_field.preview, direct_upload: form_field.direct_upload)
         when :files; default_file_field(f, record, files_name: field_name, direct_upload: form_field.direct_upload)
         when :color; f.color_field field_name, class: field_name, **common
