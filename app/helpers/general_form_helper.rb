@@ -175,9 +175,10 @@ module GeneralFormHelper
       required = { required: form_field.required }
       readonly = { readonly: form_field.readonly }
       autofocus = { autofocus: form_field.autofocus }
+      disabled = { disabled: form_field.disabled }
       common = {
         placeholder: field_name_translated,
-        **required, **readonly, **autofocus
+        **required, **readonly, **autofocus, **disabled
       }
       select_common = { **required, **readonly, **autofocus }
       minmax = {}
