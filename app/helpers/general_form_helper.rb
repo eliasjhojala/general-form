@@ -125,7 +125,7 @@ module GeneralFormHelper
   end
 
   def textSpan(f, record, field, **options)
-    tag.span(label_content(f, record, field, **options), class: "#{field.field_name} text_span")
+    tag.span(label_content(f, record, field, **options), class: "#{field.field_name} text_span", **data_tooltip(f, field, **options))
   end
 
   def localised_field_name(record, field)
@@ -309,10 +309,11 @@ module GeneralFormHelper
       return nil if field_plain.blank?
 
       if GeneralForm.use_form_floating || options_[:use_form_floating]
+
         if floatable?(form_field, **options_)
           klass = "form-floating for-#{field_name}"
           klass += ' for-select2' if use_select2
-          tag.div class: klass do
+          tag.div class: klass, **data_tooltip(f, form_field, **options_) do
             concat field_plain
             if field_type == :text_area
               concat tag.div(class: 'padding')
@@ -321,7 +322,7 @@ module GeneralFormHelper
             concat f.label(field_name, options_[:label_content] || field_name_translated)
           end
         else
-          tag.div class: 'non-floatable' do
+          tag.div class: 'non-floatable', **data_tooltip(f, form_field, **options_) do
             concat field_plain
           end
         end
@@ -410,6 +411,11 @@ module GeneralFormHelper
     type = field.field_type || :default
     (type.in?([:default, :password, :title, :subtitle, :text_area, :datepicker, :date, :time, :datetime, :phone_number, :disabled, :disabled_date, :disabled_time, :function, :number, :file, :files, :localised, :localised_text_area]) ||
     type == :select) && !options[:is_part_of_alterable_has_many_association]
+  end
+
+  def data_tooltip f, field, **options
+    tooltip = options[:field_descriptions].present? && options.dig(:field_descriptions, f.object.class.to_s, field.field_name)
+    tooltip.present? ? { data: { tooltip: tooltip } } : {}
   end
 
 end
