@@ -371,11 +371,12 @@ module GeneralFormHelper
     end
   end
 
-  def list_errors record, **options
-    if record&.errors&.any?
+  def list_errors records, **options
+    records = [records] unless records.is_a?(Array)
+    if records.any? { _1.errors.any? }
       concat tag.span t('general.words.errors'), class: 'errors-title' unless options[:no_title]
       tag.ul class: 'errors' do
-        record.errors.full_messages.each do |message|
+        records.map { _1.errors.full_messages }.flatten.each do |message|
           concat tag.li message
         end
       end
