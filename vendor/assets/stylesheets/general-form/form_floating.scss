@@ -89,6 +89,7 @@ form.general .form-floating,
       position: absolute;
       border: 1px solid rgb(200, 200, 200);
       pointer-events: none;
+      box-sizing: border-box;
     }
 
     > textarea {
@@ -96,6 +97,9 @@ form.general .form-floating,
       padding-top: 0 !important;
       margin-top: 0;
       margin-bottom: 0;
+      & ~ .visual-container {
+        border-radius: 3px;
+      }
       &, &:focus, &:active, &:hover {
         border: none !important;
         box-shadow: none !important;
