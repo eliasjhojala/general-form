@@ -121,6 +121,7 @@ form.general .form-floating,
       padding: 1.13em .75em;
       padding-top: 1.425em !important;
       padding-bottom: .25em !important;
+      padding-right: 2.35em;
       background-size: 1.75em;
       background-position: right .45em center;
     }
@@ -181,4 +182,22 @@ form.general .form-floating,
 
 form.general .non-floatable {
   &, .field_with_errors { > select { width: 100%; } }
+}
+
+form.general.floating {
+  .input_container {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    gap: .5em;
+    width: 100%;
+    .non-floatable {
+      display: flex;
+      gap: .5em;
+      align-items: center;
+    }
+    .form-floating > *:not(.tooltip) {
+      width: 100% !important;
+    }
+  }
 }

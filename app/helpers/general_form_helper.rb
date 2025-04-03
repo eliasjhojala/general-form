@@ -149,7 +149,7 @@ module GeneralFormHelper
   end
 
   def beforeFormField(f, record, field, **options)
-    unless field.hide_name || field.name_after || ((GeneralForm.use_form_floating || options[:use_form_floating]) && floatable?(field, **options))
+    unless field.hide_name || field.name_after || GeneralForm.use_form_floating || options[:use_form_floating]
       textSpan(f, record, field, **options)
     end
   end
@@ -324,6 +324,9 @@ module GeneralFormHelper
           end
         else
           tag.div class: 'non-floatable', **data_tooltip(f, form_field, **options_) do
+            unless options_[:is_part_of_alterable_has_many_association]
+              concat textSpan(f, record, form_field, **options_)
+            end
             concat field_plain
           end
         end
