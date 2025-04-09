@@ -58,10 +58,11 @@ onLoad = ->
   setupDateFields()
   setupSelect2Ids()
 
-  checkbox_amount = $('.input_container.check_box_container').length
+  containers = $('.input_container').filter('.check_box_container, .flags_check_boxes_container')
+  checkbox_amount = containers.length
   if checkbox_amount > 1
     checkbox_uid_length = Math.ceil(checkbox_amount / 5)
-    $('.input_container.check_box_container').each ->
+    containers.each ->
       checkbox = $(this).find('input[type="checkbox"]')
       label = $(this).find("label[for=\"#{checkbox.attr('id')}\"]")
       uid = uniqueId(checkbox_uid_length)

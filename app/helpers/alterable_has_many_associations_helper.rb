@@ -12,6 +12,7 @@ module AlterableHasManyAssociationsHelper
     f.fields_for item_array_name, item_for_fields do |sif|
       tag.tr do
         concat sif.hidden_field :id, value: item.id
+        concat sif.hidden_field :_delete, value: 0, class: '_delete' if options[:delete_button]
         item_fields = options[:item_fields] || GeneralForm.default_fields[item_class]
         item_fields.each do |field|
           concat tag.td(formFields(sif, item, field, is_part_of_alterable_has_many_association: true), class: [field].flatten.map(&:field_name))
@@ -64,6 +65,7 @@ module AlterableHasManyAssociationsHelper
     disable_key_binds = "disable_key_binds" if options[:disable_key_binds]
     directly_downward_with_enter = "directly_downward_with_enter" if options[:directly_downward_with_enter]
     add_item_callback = options[:add_item_callback]
+    render_initial_item = options.key?(:render_initial_item) ? options[:render_initial_item] : true
 
     tag.div(class: "alterable_has_many_associations_form #{disable_key_binds} #{directly_downward_with_enter}", **(add_item_callback ? { data: { add_item_callback: add_item_callback } } : {})) do
       general_table(class: options[:table_class]) do
@@ -93,7 +95,7 @@ module AlterableHasManyAssociationsHelper
               unsaved_items_data.each do |item|
                 concat one_item(f: f, field_values: item, item_array_name: item_array_name, item_class: item_class, item_fields: item_fields, **options.slice(:delete_button))
               end
-            else
+            elsif render_initial_item
               concat one_item(f: f, item_array_name: item_array_name, item_class: item_class, item_fields: item_fields, **options.slice(:delete_button, :field_values, :new_item)) unless associated_object.any?
             end
           end

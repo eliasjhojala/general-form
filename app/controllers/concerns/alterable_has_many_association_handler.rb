@@ -44,7 +44,8 @@ module AlterableHasManyAssociationHandler
         item_id = item[id_field_name].present? ? item[id_field_name].to_i : nil
         permitted_params = item.permit(params_to_permit).except(habtm_field_names_)
         check_box_fields_names_.each { |field| permitted_params[field] ||= false } # In normal form there would be hidden 0-field to do this, but it doesn't work correct with form containing has-many-association
-        should_be_kept = (existence_field_name == :any_field && item.except(:id).values.any?(&:present?)) || item[existence_field_name].present?
+        should_be_kept = !ActiveModel::Type::Boolean.new.cast(item[:_delete])
+        should_be_kept &&= (existence_field_name == :any_field && item.except(:id).values.any?(&:present?)) || item[existence_field_name].present?
         if item_id.present? # If item is not new --> update it
           if should_be_kept # If item should be kept --> update it
             unless prevent_activerecord_import

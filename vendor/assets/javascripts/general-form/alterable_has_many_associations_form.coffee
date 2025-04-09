@@ -27,7 +27,7 @@ onLoad = ->
 
   delete_item = (e, tr) ->
     e.preventDefault()
-    tr.find('input:not([type=hidden]), select:not([type=hidden])').val('')
+    tr.find('input._delete').val 1
     tr.addClass 'hidden'
     tr.find('*').prop 'required', false
     if $('tr:not(.hidden)').length <= 1

@@ -91,14 +91,15 @@ module GeneralFormHelper
           end
         end
       elsif form_fields.first.field_type == :flags_check_boxes
-        form_fields.each do |field|
-          concat (fields_for_assoc_if_needed f, record, field, field.association_path do |ff|
-            field_html = formField(ff, ff.object, field, **options)
-            next if field_html.nil?
-            concat field_html
-          end)
+        capture do
+          form_fields.each do |field|
+            concat (fields_for_assoc_if_needed f, record, field, field.association_path do |ff|
+              field_html = formField(ff, ff.object, field, **options)
+              next if field_html.nil?
+              concat field_html
+            end)
+          end
         end
-        nil
       elsif form_fields.first.field_type.in?([:localised, :localised_text_area])
         field = form_fields.first
         unless (field.privileges.present? && !current_user.privileges?(field.privileges)) || (field.privileges_strict.present? && !current_user.privileges_strict?(field.privileges_strict))
@@ -299,10 +300,25 @@ module GeneralFormHelper
           form_field.options_name ||= "name"
           f.select field_name, options_from_collection_for_select(options, "id", form_field.options_name, value), {:include_blank => "-"}, {class: field_name, 'autocomplete': autocomplete, multiple: form_field.multiple, disabled: form_field.disabled, **select_common }
         when :flags_check_boxes
-          f.collection_check_boxes(field_name, translated_flag_pairs(record.class, field_name), :last, :first) do |b|
-            concat (tag.div class: ['input_container', "#{field_name}_container", "#{field_type}_container"].flatten.uniq.join(' ') do
-              concat b.check_box + b.label(class: 'material-icons') { '<span>check_box_outline_blank</span><span>check_box</span>'.html_safe } + tag.span(b.text, class: 'text_span')
-            end)
+          # Use custom checkboxes instead of collection_check_boxes to
+          # also work correctly within fields_for with has_many assocication
+          # Default collection_check_boxes drops [] from name
+          capture do
+            collection = translated_flag_pairs(record.class, field_name)
+            current_values = record.send(field_name)
+            input_name = "#{f.object_name}[#{field_name}][]"
+
+            concat tag.input(type: 'hidden', name: input_name, value: '', autocomplete: 'off')
+            collection.each do |label, value|
+              checked = current_values.include?(value)
+              checkbox_id = sanitize_to_id("#{f.object_name}_#{field_name}_#{value}")
+
+              concat(tag.div(class: ['input_container', "#{field_name}_container", "#{field_type}_container"].flatten.uniq.join(' ')) do
+                concat check_box_tag(input_name, value, checked, id: checkbox_id)
+                concat label_tag(checkbox_id, class: 'material-icons') { '<span>check_box_outline_blank</span><span>check_box</span>'.html_safe }
+                concat tag.span(label, class: 'text_span')
+              end)
+            end
           end
         end
       end
