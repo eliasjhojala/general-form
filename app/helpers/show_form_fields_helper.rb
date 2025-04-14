@@ -1,12 +1,12 @@
 module ShowFormFieldsHelper
-  
-  def show_all_form_fields(record, fields, fields_name = nil)
+
+  def show_all_form_fields(record, fields, fields_name = nil, **opts)
     fields.each do |field|
-      concat show_form_fields(record, field, fields_name)
+      concat show_form_fields(record, field, fields_name, **opts)
     end
     return
   end
-  
+
   def show_form_fields(record, form_fields, fields_name = nil, **opts)
     form_fields = standardize_form_fields form_fields
     if form_fields.count() == 1 && form_fields[0].field_type == :associated_fields
@@ -19,37 +19,45 @@ module ShowFormFieldsHelper
       form_fields.each do |field|
         next if field.field_type == :hidden
         unless field.privileges.present? && !current_user.privileges?(field.privileges)
+          one_field_html = ''
           unless opts[:only_value].present?
             text = field.text.present? ? field.text : field.field_name
             span_content = record.class.human_attribute_name text
             span_content = content_tag(:a, span_content, href: "") if field.text_type == :link
-            toReturn += content_tag(:span, span_content, class: "#{field.field_name} text_span") unless field.hide_name || field.name_after
+            one_field_html += content_tag(:span, span_content, class: "#{field.field_name} text_span") unless field.hide_name || field.name_after
           end
-          toReturn += tag.span(show_form_field(record, field, fields_name) || "", class: field.field_name)
+          one_field_html += tag.span(show_form_field(record, field, fields_name) || "", class: field.field_name)
           unless opts[:only_value].present?
-            toReturn += content_tag(:span, span_content, class: "#{field.field_name} text_span") if   field.name_after
-            toReturn += content_tag(:span, field.text_after, class: "#{field.field_name.to_s} text_after text_span") if field.text_after
+            one_field_html += content_tag(:span, span_content, class: "#{field.field_name} text_span") if   field.name_after
+            one_field_html += content_tag(:span, field.text_after, class: "#{field.field_name.to_s} text_after text_span") if field.text_after
           end
+        end
+        if opts[:floating]
+          toReturn += tag.div(one_field_html.html_safe)
+        else
+          toReturn += one_field_html
         end
       end
       toReturn += '</div>'
       return toReturn.html_safe
     end
   end
-  
+
   def show_form_field(record, form_field, fields_name = nil)
     form_field = standardize_form_field form_field
     fields_name ||= "fields"
     field_name = form_field.field_name
     field_type = form_field.field_type || :default
-    
+
     if record.present? && field_name.present?
 
       case field_type
-      when :default; record[field_name] or record.send(field_name).to_s
-      when :check_box; record[field_name] or record.send(field_name).to_s
+      when :default, :number; record[field_name] or record.send(field_name).to_s
+      when :check_box; (record[field_name] or record.send(field_name)) ? 'x' : '-'
       when :text_area; record[field_name] or record.send(field_name).to_s
       when :datepicker, :date; date (record[field_name] or record.send(field_name).to_s)
+      when :datetime; time (record[field_name] or record.send(field_name)), :long
+      when :time; (record[field_name] or record.send(field_name))&.strftime("%H:%M")
       when :disabled; record[field_name] or record.send(field_name).to_s
       when :disabled_date; date (record[field_name] or record.send(field_name).to_s)
       when :function; record.send(field_name).to_s
@@ -72,11 +80,14 @@ module ShowFormFieldsHelper
             end
           end
         end
-        
+
+      else
+        "#{field_type} not supported"
+
       end
-      
+
     end
-    
+
   end
-  
+
 end
