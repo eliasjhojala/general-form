@@ -339,7 +339,7 @@ module GeneralFormHelper
             concat f.label(field_name, options_[:label_content] || field_name_translated)
           end
         else
-          tag.div class: 'non-floatable', **data_tooltip(f, form_field, **options_) do
+          tag.div class: 'non-floatable' do
             unless options_[:is_part_of_alterable_has_many_association]
               concat textSpan(f, record, form_field, **options_)
             end

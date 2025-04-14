@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = %q{general-form}
-  s.version = '0.0.125'
+  s.version = '0.0.126'
   s.date = %q{2025-04-14}
   s.summary = %q{general system for rendering forms and handling data in controllers}
   s.files = [
