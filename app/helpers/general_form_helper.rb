@@ -226,7 +226,12 @@ module GeneralFormHelper
           x = form_field.no_policy_scope
           use_policy_scope = x.blank? || (x.respond_to?(:call) && x[].blank?)
           unless form_field.select_options.present?
-            options = enum_options_for_select(record, field_name, form_field.allowed_keys&.call)
+            allowed_keys = if form_field.data_for_allowed_keys.present?
+              form_field.allowed_keys[record.send(form_field.data_for_allowed_keys)]
+            else
+              form_field.allowed_keys&.call
+            end
+            options = enum_options_for_select(record, field_name, allowed_keys)
             if options.present?
               f.select field_name, options, {include_blank: prompt}, {class: field_name, 'autocomplete': autocomplete, multiple: form_field.multiple, disabled: form_field.disabled, **select_common }
             end
