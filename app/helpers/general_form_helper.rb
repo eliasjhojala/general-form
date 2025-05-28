@@ -109,11 +109,12 @@ module GeneralFormHelper
                 field_localised = field.dup
                 field_localised.field_name = :"#{field.field_name}_#{locale}"
                 field_localised.field_type = {localised: :default, localised_text_area: :text_area}[field.field_type]
-                options_with_postfix = options.merge(postfix: " (#{locale})")
+                localised_field_name = localised_field_name(record, field) + " (#{locale})"
+                options = options.dup.merge(localised_field_name: localised_field_name)
                 concat (fields_for_assoc_if_needed f, record, field, field.association_path do |ff|
-                  concat beforeFormField(ff, ff.object, field, **options_with_postfix)
-                  concat formField(ff, ff.object, field_localised, **options.merge(name_for_i18n: field.field_name, label_content: label_content(ff, f.object, field, **options_with_postfix)))
-                  concat afterFormField(ff, ff.object, field, **options_with_postfix)
+                  concat beforeFormField(ff, ff.object, field, **options)
+                  concat formField(ff, ff.object, field_localised, **options)
+                  concat afterFormField(ff, ff.object, field, **options)
                 end)
               end)
             end
@@ -143,8 +144,7 @@ module GeneralFormHelper
   end
 
   def label_content(f, record, field, **options)
-    span_content = localised_field_name(record, field) unless field.hide_name
-    span_content += options[:postfix] if options[:postfix].present?
+    span_content = options[:localised_field_name] || localised_field_name(record, field) unless field.hide_name
     span_content = tag.a(span_content, href: '') if field.text_type == :link
     span_content
   end
@@ -169,7 +169,7 @@ module GeneralFormHelper
     form_field = standardize_form_field form_field
     field_name = form_field.field_name
     field_type = form_field.field_type || :default
-    field_name_translated = localised_field_name(record, form_field) unless [:check_box, :only_value, :only_value_as_date, :title_only_value, :hidden].include?(field_type) || record.nil?
+    field_name_translated = options[:localised_field_name] || localised_field_name(record, form_field) unless [:check_box, :only_value, :only_value_as_date, :title_only_value, :hidden].include?(field_type) || record.nil?
     autocomplete = form_field.autocomplete || field_name
     if field_name.present?
       use_select2 = false
