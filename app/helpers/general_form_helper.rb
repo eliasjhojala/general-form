@@ -238,7 +238,7 @@ module GeneralFormHelper
           else
             form_field.options_name ||= "name"
             if form_field.data_for_select_options.present?
-              options = form_field.select_options[record[form_field.data_for_select_options]]
+              options = form_field.select_options[*([form_field.data_for_select_options].flatten.map { record.send(_1) })]
               options = policy_scope(options) if use_policy_scope
             else
               if form_field.select_options.respond_to? :call
