@@ -196,7 +196,7 @@ form.general.floating {
       gap: .5em;
       align-items: center;
     }
-    .form-floating > *:not(.tooltip) {
+    .form-floating > *:not(.tooltip, label) {
       width: 100% !important;
     }
   }
