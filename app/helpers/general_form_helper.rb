@@ -138,6 +138,8 @@ module GeneralFormHelper
       else
         t(text)
       end
+    elsif field.localised_text.respond_to?(:call)
+      field.localised_text[]
     else
       field.localised_text
     end
