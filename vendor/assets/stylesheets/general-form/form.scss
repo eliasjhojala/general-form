@@ -21,25 +21,25 @@ form.general, .general_show_form_fields_container {
     width: 100%;
     max-width: 1000px;
 
-    > label, .non-floatable > label {
-      user-select: none;
-      font-size: 37px;
-      @media screen and (max-width: 800px) { font-size: 33.5px; }
-      padding: 0px;
-      margin-left: -3.8px;
-      margin-right: 1px;
-      width: 40px;
-      span:last-of-type { display: none; }
-      span:first-of-type { display: inline; }
-      span {
-        font-size: 37px;
-        vertical-align: initial !important;
-        @media screen and (max-width: 800px) { font-size: 33.5px; }
-      }
-      vertical-align: middle;
-    }
     input[type="checkbox"] {
       display: none;
+      & + label {
+        user-select: none;
+        font-size: 37px;
+        @media screen and (max-width: 800px) { font-size: 33.5px; }
+        padding: 0px;
+        margin-left: -3.8px;
+        margin-right: 1px;
+        width: 40px;
+        span:last-of-type { display: none; }
+        span:first-of-type { display: inline; }
+        span {
+          font-size: 37px;
+          vertical-align: initial !important;
+          @media screen and (max-width: 800px) { font-size: 33.5px; }
+        }
+        vertical-align: middle;
+      }
       &:checked + label {
         color: $general-form-checkbox-background;
         span:last-of-type { display: inline; }
@@ -66,6 +66,11 @@ form.general, .general_show_form_fields_container {
     input, select, textarea, trix-editor {
       @include error-styles();
     }
+  }
+  .check_box_container:has(.field_with_errors) .non-floatable {
+    border-radius: 3px;
+    border: 1px solid rgb(200, 200, 200);
+    @include error-styles();
   }
 
   input, select, textarea, trix-editor {
