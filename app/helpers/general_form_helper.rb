@@ -306,6 +306,8 @@ module GeneralFormHelper
           options = policy_scope(options) if form_field.no_policy_scope.blank?
           form_field.options_name ||= "name"
           f.select field_name, options_from_collection_for_select(options, "id", form_field.options_name, value), {:include_blank => "-"}, {class: field_name, 'autocomplete': autocomplete, multiple: form_field.multiple, disabled: form_field.disabled, **select_common }
+        when :partial
+          render partial: form_field.partial, locals: { f: f, field: form_field, record: record, **options }
         when :flags_check_boxes
           # Use custom checkboxes instead of collection_check_boxes to
           # also work correctly within fields_for with has_many assocication
@@ -347,7 +349,7 @@ module GeneralFormHelper
           end
         else
           tag.div class: 'non-floatable' do
-            unless options_[:is_part_of_alterable_has_many_association]
+            unless options_[:is_part_of_alterable_has_many_association] || form_field.hide_name
               concat textSpan(f, record, form_field, **options_)
             end
             concat field_plain
