@@ -226,7 +226,8 @@ module GeneralFormHelper
           prompt = form_field.prompt_translated
           prompt ||= form_field.prompt.present? ? t("activerecord.prompts.#{record.class.name.underscore}.#{field_name}") : '-'
           x = form_field.no_policy_scope
-          use_policy_scope = x.blank? || (x.respond_to?(:call) && x[].blank?)
+          is_activerecord_relation = form_field.select_options.is_a?(ActiveRecord::Relation) || (form_field.select_options.is_a?(Class) && form_field.select_options < ActiveRecord::Base)
+          use_policy_scope = (x.blank? || (x.respond_to?(:call) && x[].blank?)) && is_activerecord_relation
           unless form_field.select_options.present?
             allowed_keys = if form_field.data_for_allowed_keys.present?
               form_field.allowed_keys[record.send(form_field.data_for_allowed_keys)]
