@@ -92,20 +92,24 @@ module FileHelper
   
   def default_file_field f, model, **options
     options[:files_name] ||= :attachments
-    [f.file_field(options[:files_name], multiple: true, **options.slice(:direct_upload)),
-    list_attached_files(model, show_delete: true, files_name: options[:files_name])].join(' ').html_safe
+    capture do
+      concat f.file_field(options[:files_name], multiple: true, **options.slice(:direct_upload))
+      concat list_attached_files(model, show_delete: true, files_name: options[:files_name])
+    end
   end
   
   def single_file_field f, model, **options
-    options[:attachment_name] ||= :attachment
-    attachment = model.send(options[:attachment_name])
-    if attachment.attached? && !options[:replace_instead_of_delete]
-      concat link_to(attachment.filename, rails_blob_path(attachment, disposition: "inline"), target: "__blank")
-      concat link_to('Poista', delete_attachment_path(attachment.id), method: :delete, **are_you_sure_confirm)
-    else
-      concat f.file_field options[:attachment_name], multiple: false, **options.slice(:direct_upload)
+    capture do
+      options[:attachment_name] ||= :attachment
+      attachment = model.send(options[:attachment_name])
+      if attachment.attached? && !options[:replace_instead_of_delete]
+        concat link_to(attachment.filename, rails_blob_path(attachment, disposition: "inline"), target: "__blank")
+        concat link_to('Poista', delete_attachment_path(attachment.id), method: :delete, **are_you_sure_confirm)
+      else
+        concat f.file_field options[:attachment_name], multiple: false, **options.slice(:direct_upload)
+      end
+      concat options[:preview] ? list_attached_files(model, show_delete: true, files_name: options[:attachment_name]) : nil
     end
-    options[:preview] ? list_attached_files(model, show_delete: true, files_name: options[:attachment_name]) : nil
   end
   
   def attachment_links attachments
