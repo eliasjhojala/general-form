@@ -296,6 +296,7 @@ module GeneralFormHelper
           options = form_field.select_options[]
           f.collection_select field_name, options, 'id', form_field.options_name, {}, { multiple: true, class: 'select2', **select_common }
         when :flags_select
+          use_select2 = true
           f.collection_select field_name, translated_flag_pairs(record.class, field_name), 'last', 'first', {}, { class: "select2", multiple: true, **select_common }
         when :habtm_select
           value = record.send(form_field.habtm).pluck(:id)
@@ -440,7 +441,7 @@ module GeneralFormHelper
 
   def floatable? field, **options
     type = field.field_type || :default
-    (type.in?([:default, :password, :title, :subtitle, :text_area, :datepicker, :date, :time, :datetime, :phone_number, :disabled, :disabled_date, :disabled_time, :function, :number, :file, :files, :localised, :localised_text_area]) ||
+    (type.in?([:default, :password, :title, :subtitle, :text_area, :datepicker, :date, :time, :datetime, :phone_number, :disabled, :disabled_date, :disabled_time, :function, :number, :file, :files, :localised, :localised_text_area, :flags_select]) ||
     type == :select) && !options[:is_part_of_alterable_has_many_association]
   end
 
