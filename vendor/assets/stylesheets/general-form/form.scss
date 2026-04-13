@@ -148,6 +148,36 @@ form.general, .general_show_form_fields_container {
     height: 2em;
   }
 
+
+  // Native checkboxes (not .input_container > checkbox + label.material-icons): match custom icon box (~37px / 33.5px).
+  // Direct-child custom checkboxes use display:none and ignore these dimensions.
+  label.native {
+    input[type="checkbox"] {
+      display: initial;
+      --size: 28px;
+      width: var(--size);
+      height: var(--size);
+      min-width: var(--size);
+      min-height: var(--size);
+      margin: 0 6px 0 0;
+      margin-block: 4px;
+      vertical-align: middle;
+      box-sizing: border-box;
+      accent-color: $general-form-checkbox-background;
+      @media screen and (max-width: 800px) {
+        width: 33.5px;
+        height: 33.5px;
+        min-width: 33.5px;
+        min-height: 33.5px;
+      }
+      &:disabled {
+        cursor: not-allowed;
+        opacity: 0.55;
+        accent-color: $general-form-checkbox-background-disabled;
+      }
+    }
+  }
+
   trix-toolbar {
     @media screen and (max-width: 920px) {
       .quote, .code {
