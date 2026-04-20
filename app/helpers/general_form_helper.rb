@@ -416,10 +416,16 @@ module GeneralFormHelper
   def general_form_with_fields_for record, fields = nil, **options, &block
     fields ||= GeneralForm.default_fields[record.class]
     concat list_errors record
-    form_for record, html: { class: "general#{' floating' if GeneralForm.use_form_floating || options[:use_form_floating]}" } do |f|
-      concat allFormFields f, record, fields, **options
+    form_route_keys = %i[url method html remote authenticity_token namespace scope format]
+    field_options = options.except(*form_route_keys)
+    use_floating = GeneralForm.use_form_floating || field_options[:use_form_floating]
+    form_route_opts = options.slice(*form_route_keys)
+    html = { class: "general#{' floating' if use_floating}" }.merge(form_route_opts[:html] || {})
+    form_args = form_route_opts.except(:html).compact.merge(html: html)
+    form_for record, **form_args do |f|
+      concat allFormFields f, record, fields, **field_options
       yield f if block_given?
-      concat f.submit unless options.key?(:submit) && !options[:submit]
+      concat f.submit unless field_options.key?(:submit) && !field_options[:submit]
     end
   end
 
