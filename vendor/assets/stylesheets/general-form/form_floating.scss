@@ -24,11 +24,21 @@ form.general .form-floating,
       margin: 0 !important;
     }
 
-    > input[type=date] {
+    > input[type=date],
+    > input[type=datetime-local] {
       appearance: none;
       -webkit-appearance: none;
       &::-webkit-date-and-time-value {
         text-align: left;
+      }
+    }
+
+    > input[type=datetime-local] {
+      padding-top: 1.625em !important;
+      padding-bottom: .625em !important;
+
+      ~ label {
+        transform: scale(.85) translateY(-.5em) translateX(.15em);
       }
     }
 
