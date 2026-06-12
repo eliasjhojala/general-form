@@ -1,0 +1,29 @@
+---
+description: DRY — extract shared responsibility, but don't over-abstract similar-looking code
+alwaysApply: true
+---
+
+# DRY — Don't Repeat Yourself
+
+DRY is not only about avoiding identical lines. It means **shared responsibility belongs in one place**.
+
+## Before writing new logic
+
+- Search the gem for existing helpers, field classes (`app/form_fields/`), concerns, CoffeeScript utilities (`vendor/assets/javascripts/general-form/`), and SCSS partials (`vendor/assets/stylesheets/general-form/`) that already handle the same or similar responsibility.
+- If something similar exists, extend or generalise it rather than creating a parallel implementation — e.g. a new field type should inherit from the closest existing field class, not copy one.
+
+## Structural signals that DRY is being violated
+
+- Two field classes implement equivalent rendering or validation logic → extract to a shared base class or module.
+- Two helpers build structurally similar markup → extract a shared partial/private helper.
+- Two CoffeeScript handlers contain equivalent logic → extract a shared function in `form.coffee` or a utility file.
+- Two SCSS blocks share the same declarations → extract a variable, mixin, or shared selector (mind `without_theme.scss` vs themed styles).
+
+## The test
+
+Ask: *if this responsibility changes, how many places need updating?* If more than one, that's a DRY violation.
+
+## When NOT to extract
+
+- A few lines that look alike but evolve independently are not a DRY violation. Premature abstraction is worse than a small amount of repetition.
+- Only extract when the responsibility is genuinely shared *and* the next change to it would otherwise touch more than one site.

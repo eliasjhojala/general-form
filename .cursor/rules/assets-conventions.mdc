@@ -1,0 +1,25 @@
+---
+description: Vendor asset conventions — CoffeeScript form behaviors and themed/unthemed SCSS
+alwaysApply: false
+globs:
+  - vendor/assets/javascripts/**/*.coffee
+  - vendor/assets/stylesheets/**/*.scss
+---
+
+# Browser assets (vendored into consuming apps)
+
+The gem ships its browser code under `vendor/assets/`; consuming apps require it through Sprockets. These files run inside **every** consumer — keep them dependency-light (jQuery is assumed; nothing app-specific).
+
+## CoffeeScript (`vendor/assets/javascripts/general-form/`)
+
+- Form behaviors live in `form.coffee` (incl. `loadForm` / `loadFormWithin` entry points), with feature files alongside (`alterable_has_many_associations_form.coffee`, `checkbox_with_error.coffee`).
+- Public entry-point names are API for inline scripts in consuming apps — don't rename or change signatures without searching consumers.
+- Bind events with namespaced handlers / `off().on()` patterns so repeated `loadForm` calls (AJAX-replaced forms) don't double-bind.
+- No user-facing strings in JS — text comes from the markup the helpers render.
+
+## SCSS (`vendor/assets/stylesheets/general-form/`)
+
+- `form.scss` is the themed baseline; `without_theme.scss` is the unthemed variant; `form_floating.scss` the floating-label layout; `validation_errors.scss` and `alterable_has_many_associations_form.scss` the feature styles.
+- New styles must work in both themed and unthemed consumers — put theme-dependent declarations only in the themed files.
+- Class names rendered by the Ruby helpers and selected here are a shared contract; change them in both places in the same commit, and check consumers for overrides of the same selectors.
+- Consumers compile with LibSass (sassc-rails): don't mix incompatible units inside `min()`/`max()`/`clamp()` (use two declarations, e.g. `width` + `max-width`).

@@ -1,0 +1,13 @@
+---
+description: Always-apply baseline — form-helper gem consumed by many apps, study before editing, persist conventions
+alwaysApply: true
+---
+
+- general-form is the **form helper gem** (`general_form_for`, `general_form_with_fields_for`, field types under `app/form_fields/`, alterable has-many association forms) used by the Rails apps in `~/git` (snacktime-gvodata, menddie, visualevents-intra, home_automation, visualsites.fi) and by the **fiscal** engine, which extends its field classes. Treat helper signatures, field-type names, CSS class names, and JS entry points (`loadForm`, `loadFormWithin`) as **public API** — search consumers before renaming or changing behavior.
+- New behavior should be opt-in (new option/field type) rather than changing what existing call sites render.
+- Study the existing structure before editing: `app/helpers/`, `app/form_fields/`, `app/models/concerns/`, `app/controllers/concerns/`, browser assets in `vendor/assets/javascripts/general-form/` (CoffeeScript) and `vendor/assets/stylesheets/general-form/` (SCSS).
+- Keep `README.md` and `docs/GUIDE.md` in sync with user-visible changes (new field types, options, layouts) — they are the integration reference for the consuming apps.
+- There is **no automated test suite** — verify changes inside a consuming app and state how the change was verified.
+- Persist project conventions proactively to `.cursor/rules/` (extend an existing rule or add a focused `.mdc`) instead of relying on chat memory. Treat explicit user corrections as mandatory to persist in the same task.
+
+Commit message conventions live in `commit-messages.mdc`.

@@ -1,0 +1,27 @@
+---
+description: Git commit subject/body style and agent-assisted trailer (Made-with line per agent)
+alwaysApply: true
+---
+
+# Commit messages
+
+## Subject
+
+- Concise imperative subject lines matching recent repository history (`git log --oneline -20`).
+- Pick the verb that makes the message clearest for the actual change; conventional verbs like `Add` / `Fix` / `Update` / `Remove` are common and allowed, as are other clear imperative verbs (`Style` / `Forward` / `Support` / …).
+- Examples from this repo: `Style datetime-local fields in floating form layout`, `Forward form_for options from general_form_with_fields_for`, `Support scoped loadForm and loadFormWithin`, `Add native checkbox styles`.
+
+## Body
+
+- Omit the body for small/simple changes.
+- Add a body only when it adds clear value: *why*, consumer-visible impact, important caveat.
+- Keep it brief (1–3 short lines or a small bullet list); match the size of the change.
+
+## Agent-assisted trailer
+
+End the message with a single trailing line identifying the agent that wrote it:
+
+- Cursor commits: `Made-with: Cursor`
+- Claude Code commits: `Made-with: Claude`
+
+Do **not** add a `Co-authored-by:` trailer; the `Made-with:` line is the convention used here.

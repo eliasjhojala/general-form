@@ -1,0 +1,11 @@
+---
+description: Write source code, comments, and repo documentation in English
+alwaysApply: true
+---
+
+## Language for code, comments, and documentation
+
+- Write **source code, comments, and documentation** (`README.md`, `docs/GUIDE.md`) in **English**, unless the user explicitly asks for another language for a specific artifact.
+- The **user's chat language** (often Finnish) is **not** a signal to write code, comments, or documentation in that language — answer the user in their language; keep the codebase in English.
+- Any translatable strings the gem renders go through locale keys resolved in the consuming app — don't hardcode Finnish or English copy in helpers or assets.
+- Commit messages and identifiers (class/method/variable names, file names) are English.
