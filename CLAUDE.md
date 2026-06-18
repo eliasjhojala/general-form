@@ -9,7 +9,9 @@ conventions is `.cursor/rules/`**. This file mirrors them for Claude; the linked
 - Form helper gem (`general_form_for`, field types, alterable has-many forms) consumed by snacktime-gvodata, menddie, visualevents-intra, home_automation, visualsites.fi, and extended by the **fiscal** engine
 - Ruby in `app/` (helpers, form_fields, concerns); browser assets vendored: CoffeeScript in `vendor/assets/javascripts/general-form/`, SCSS (themed + unthemed) in `vendor/assets/stylesheets/general-form/`
 - Integration reference: `README.md` + `docs/GUIDE.md` — keep in sync with changes
-- **No test suite** — verify in a consuming app and say how
+- Lightweight regression test suite under `test/` (`rake test`); does **not** boot
+  a full Rails app, only the gem's plain-Ruby units. Behaviour that needs a real
+  view context is still best verified in a consuming app — say how.
 - Branch: `master`
 
 ## Always-applied rules (summary + link)

@@ -134,7 +134,11 @@ module GeneralFormHelper
     if field.localised_text.blank?
       text = field.text.present? ? field.text : field.field_name
       if field.text.blank? || text.is_a?(Symbol) || (text.is_a?(String) && text.exclude?('.'))
-        record.class.human_attribute_name(text)
+        # On Rails 8 human_attribute_name(blank) blows up: a blank attribute
+        # makes it fall back to namespace.humanize, but namespace is nil for a
+        # non-dotted key, so it raised NoMethodError on nil. Guard the blank/
+        # false case (e.g. text: false to suppress the label) before calling.
+        text.present? ? record.class.human_attribute_name(text) : nil
       else
         t(text)
       end
@@ -202,7 +206,7 @@ module GeneralFormHelper
         when :trix_editor; tag.div(f.trix_editor(field_name, class: field_name, **common), class: 'trix-container')
         when :datepicker, :date; f.date_field field_name, class: "#{field_name} datepicker", value: (f.object.send(field_name).strftime('%Y-%m-%d') rescue nil), data: { val: (f.object.send(field_name).strftime('%-d.%-m.%Y') rescue nil) }, **common, **minmax
         when :time; f.time_field field_name, class: "#{field_name} time", value: (f.object.send(field_name).strftime('%H:%M') rescue nil), data: { val: (f.object.send(field_name).strftime('%H:%M') rescue nil) }, **common
-        when :date_and_time; [:date, :time].sum { formField(f, record, GeneralForm::Field.new(field_name: "#{field_name}_#{_1}", type: _1, **common, **minmax)) }
+        when :date_and_time; safe_join([:date, :time].map { formField(f, record, GeneralForm::Field.new(field_name: "#{field_name}_#{_1}", type: _1, **common, **minmax)) })
         when :datetime; f.datetime_local_field field_name, step: 1, class: "#{field_name} datetime", value: (f.object.send(field_name).strftime('%Y-%m-%dT%H:%M:%S') rescue nil), **common, **minmax
         when :phone_number; f.text_field field_name, class: "#{field_name} phone_number", **common, 'autocomplete': autocomplete, value: Phone.readable(f.object.send(field_name))
         when :disabled; f.text_field field_name, class: "#{field_name} disabled", **html
@@ -255,7 +259,10 @@ module GeneralFormHelper
               end
               if form_field.polymorphic
                 options = options.map { |x| policy_scope(x) } if use_policy_scope
-                options = options.sum
+                # Flatten the per-type collections into one array. The old
+                # `options.sum` started Enumerable#sum at the integer 0, so on
+                # Rails 8 `0 + Relation/Array` raised TypeError; seed with [].
+                options = options.sum([])
               elsif use_policy_scope && !options.is_a?(ActiveSupport::SafeBuffer)
                 options = policy_scope(options)
               end
