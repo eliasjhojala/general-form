@@ -138,7 +138,18 @@ module GeneralFormHelper
         # makes it fall back to namespace.humanize, but namespace is nil for a
         # non-dotted key, so it raised NoMethodError on nil. Guard the blank/
         # false case (e.g. text: false to suppress the label) before calling.
-        text.present? ? record.class.human_attribute_name(text) : nil
+        #
+        # `record` is the form builder's object. For a symbol-based form
+        # (`form_for :discounts` with no bound model), the builder's object is
+        # `false` (Rails default), so `record.class` is FalseClass, which does
+        # not respond to human_attribute_name. Fall back to humanizing the key.
+        if text.blank?
+          nil
+        elsif record.class.respond_to?(:human_attribute_name)
+          record.class.human_attribute_name(text)
+        else
+          text.to_s.humanize
+        end
       else
         t(text)
       end

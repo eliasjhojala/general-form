@@ -108,6 +108,39 @@ class LocalisedFieldNameBlankTest < Minitest::Test
   end
 end
 
+# --- Bug 3c: human_attribute_name on a non-model (symbol-form) record --------
+# A symbol-based form (`form_for :discounts` with no bound @discounts) yields a
+# builder whose `object` is `false` (Rails default). formField then renders each
+# field with record=false. localised_field_name called `record.class
+# .human_attribute_name`, i.e. `FalseClass.human_attribute_name`, which does not
+# exist -> NoMethodError (500). This hit any app rendering a select/MULTIPLE
+# field set through a symbol form. The gem must humanize the key directly when
+# the record's class can't translate attribute names.
+class LocalisedFieldNameNonModelRecordTest < Minitest::Test
+  class Host
+    include GeneralFormHelper
+    def t(key) = key.to_s
+  end
+
+  def field(**attrs) = GeneralForm::Field.new(**attrs)
+
+  def test_false_record_humanizes_field_name_without_raising
+    # `false` is exactly what a symbol form_for hands down as the builder object.
+    f = field(field_name: :amount, type: :number)
+    assert_equal 'Amount', Host.new.localised_field_name(false, f)
+  end
+
+  def test_nil_record_humanizes_field_name_without_raising
+    f = field(field_name: :limit_count)
+    assert_equal 'Limit count', Host.new.localised_field_name(nil, f)
+  end
+
+  def test_blank_text_with_false_record_returns_nil
+    f = field(field_name: '', text: false)
+    assert_nil Host.new.localised_field_name(false, f)
+  end
+end
+
 # --- Bug 3b: Enumerable#sum seeded at integer 0 -----------------------------
 # Two sites summed non-numeric values starting from the integer 0, which on
 # Rails 8 raises TypeError ("0 + ...").
