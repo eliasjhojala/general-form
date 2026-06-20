@@ -284,7 +284,7 @@ module GeneralFormHelper
               options_value = form_field.options_value || (!form_field.polymorphic ? 'id' : 'global_id')
               if form_field.data_attributes_for_options.present?
                 # Generate something like <option value="1" data-foo="bar">Option A</option>
-                options = options.map do |option|
+                options = options.compact.map do |option|
                   value = option.send(options_value)
                   name = option.send(form_field.options_name)
                   data_attributes = form_field.data_attributes_for_options.map { |attr| "data-#{attr}=\"#{option.send(attr)}\"" }.join(' ')
@@ -299,7 +299,7 @@ module GeneralFormHelper
                   "<option value=\"#{value}\"#{selected_attr} #{data_attributes}>#{name}</option>"
                 end.join.html_safe
               else
-                options = options_from_collection_for_select(options, options_value, form_field.options_name, record.send(field_name.to_s))
+                options = options_from_collection_for_select(options.compact, options_value, form_field.options_name, record.send(field_name.to_s))
               end
             end
             if options_length > 0 || form_field.show_always
