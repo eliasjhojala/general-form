@@ -22,6 +22,12 @@ module Fields
     permitted_fields = [:id]
     flat_fields(fields).each do |name, field|
       next if field.privileges.present? && !current_user.privileges?(field.privileges)
+      # Mirror the strict-privilege gate the view helpers apply: a field gated by
+      # privileges_strict: must not be permitted unless the user holds that exact
+      # privilege. Fail closed (exclude when unevaluable) and guard respond_to? so
+      # consumers whose User lacks privileges_strict? don't error; consumers with
+      # no privileges_strict fields never reach this branch (zero impact).
+      next if field.privileges_strict.present? && !(current_user.respond_to?(:privileges_strict?) && current_user.privileges_strict?(field.privileges_strict))
       next if skip_disabled && field.field_type == :disabled || field.disabled
       if field.association_path.present?
         cur = field.association_path.dup
