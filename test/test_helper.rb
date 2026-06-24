@@ -9,6 +9,7 @@ require 'minitest/autorun'
 require 'active_support'
 require 'active_support/core_ext'
 require 'action_view'
+require 'action_view/helpers'
 
 # general_form/engine subclasses Rails::Engine. Provide a stub if a full Rails
 # install graph isn't booted, so the entrypoint loads in isolation.
@@ -16,6 +17,18 @@ require 'rails' rescue nil
 unless defined?(Rails::Engine)
   module Rails
     class Engine; end
+  end
+end
+
+# The multiple-file-field guard (FileHelper#multiple_file_field_options) keys off
+# Rails::VERSION::MAJOR. `require 'rails'` defines it, but if the full meta-gem
+# isn't resolvable, stub it from the loaded ActionView so the guard evaluates
+# deterministically against the actual framework version under test.
+unless defined?(Rails::VERSION::MAJOR)
+  module Rails
+    module VERSION
+      MAJOR = ActionView::VERSION::MAJOR
+    end
   end
 end
 
@@ -28,3 +41,4 @@ require 'general-form'
 # App-side units that aren't auto-required by the engine in this bare harness.
 require "#{GEM_ROOT}/app/controllers/concerns/fields"
 require "#{GEM_ROOT}/app/helpers/general_form_helper"
+require "#{GEM_ROOT}/app/helpers/file_helper"

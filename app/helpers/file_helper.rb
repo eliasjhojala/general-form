@@ -93,8 +93,23 @@ module FileHelper
   def default_file_field f, model, **options
     options[:files_name] ||= :attachments
     capture do
-      concat f.file_field(options[:files_name], multiple: true, **options.slice(:direct_upload))
+      concat f.file_field(options[:files_name], multiple: true, **multiple_file_field_options, **options.slice(:direct_upload))
       concat list_attached_files(model, show_delete: true, files_name: options[:files_name])
+    end
+  end
+
+  # Rails 8.1 switched multiple-attachment assignment to replace-on-assign, so a
+  # blank hidden companion (which file_field emits by default) makes an untouched
+  # edit submit `attr=[""]` and purge every existing attachment. Render the field
+  # without that companion so an untouched field submits nothing and the
+  # association is left alone. `include_hidden:` for file_field only exists on
+  # Rails >= 7.0; on older Rails the append-mode means a blank array is harmless,
+  # so leave the default behaviour and don't pass the unsupported option.
+  def multiple_file_field_options
+    if defined?(Rails::VERSION::MAJOR) && Rails::VERSION::MAJOR >= 7
+      { include_hidden: false }
+    else
+      {}
     end
   end
   
